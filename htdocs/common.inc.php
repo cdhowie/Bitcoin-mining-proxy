@@ -27,4 +27,48 @@ function request_fail() {
     exit;
 }
 
+function json_error($message, $id) {
+    header('Content-Type: application/json-rpc');
+
+    $object = new stdClass();
+    $object->error = $message;
+    $object->result = null;
+    $object->id = $id;
+
+    echo json_encode($object);
+
+    exit;
+}
+
+function json_success($result, $id) {
+    header('Content-Type: application/json-rpc');
+
+    $object = new stdClass();
+    $object->error = null;
+    $object->result = $result;
+    $object->id = $id;
+
+    echo json_encode($object);
+
+    exit;
+}
+
+function place_json_call($object, $url, $username = '', $password = '') {
+    $authHeader = "";
+
+    if (strlen($username) != 0) {
+        $authHeader = "Authorization: Basic " . base64_encode($username . ':' . $password) . "\r\n";
+    }
+
+    $context = stream_context_create(array(
+        'http'  => array(
+            'method'    => 'POST',
+            'header'    => "Content-Type: application/json-rpc\r\n$authHeader",
+            'content'   => json_encode($object)
+        )
+    ));
+
+    return json_decode(file_get_contents($url, false, $context));
+}
+
 ?>
