@@ -28,26 +28,25 @@ function request_fail() {
 }
 
 function json_error($message, $id) {
-    header('Content-Type: application/json-rpc');
-
     $object = new stdClass();
     $object->error = $message;
     $object->result = null;
     $object->id = $id;
 
-    echo json_encode($object);
-
-    exit;
+    json_response($object);
 }
 
 function json_success($result, $id) {
-    header('Content-Type: application/json-rpc');
-
     $object = new stdClass();
     $object->error = null;
     $object->result = $result;
     $object->id = $id;
 
+    json_response($object);
+}
+
+function json_response($object) {
+    header('Content-Type: application/json-rpc');
     echo json_encode($object);
 
     exit;

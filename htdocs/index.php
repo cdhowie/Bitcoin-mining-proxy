@@ -52,7 +52,42 @@ if ($json->method != 'getwork') {
 $params = $json->params;
 
 if (is_array($params) && count($params) == 1) {
-    json_error('Work submission is not implemented yet.', $json->id);
+    $data = substr($params[0], 0, 152);
+
+    $q = $pdo->prepare('
+        SELECT
+            wp.pool_username AS username,
+            wp.pool_password AS password,
+            p.url AS url
+
+        FROM
+            work_data d,
+            worker_pool wp,
+            pool p
+
+        WHERE d.data = :data
+          AND d.worker_id = :worker_id
+
+          AND d.pool_id = p.id
+
+          AND wp.worker_id = :worker_id
+          AND wp.pool_id = p.id
+    ');
+
+    $q->execute(array(
+        ':worker_id'    => $worker_id,
+        ':data'         => $data));
+
+    $row = $q->fetch();
+    $q->closeCursor();
+
+    if ($row === FALSE) {
+        json_error('Work not found in proxy database.', $json->id);
+    }
+
+    $result = place_json_call($json, $row['url'], $row['username'], $row['password']);
+
+    json_response($result);
 }
 
 # Work request.
@@ -88,7 +123,7 @@ $request->id = "json";
 foreach ($rows as $row) {
     $response = place_json_call($request, $row['url'], $row['username'], $row['password']);
 
-    if (is_object($response) && $response->id == 'json') {
+    if (is_object($response)) {
         $q = $pdo->prepare('
             INSERT INTO work_data
 
