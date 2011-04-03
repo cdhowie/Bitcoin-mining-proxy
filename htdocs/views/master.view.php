@@ -21,7 +21,7 @@ abstract class MasterView
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
         <title><?php echo htmlspecialchars($viewdata['title']) ?></title>
-        <link rel="stylesheet" type="text/css" href="style.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo_html(make_url('/assets/style.css')) ?>" />
     </head>
     <body>
         <h1><?php echo htmlspecialchars($viewdata['title']) ?></h1>

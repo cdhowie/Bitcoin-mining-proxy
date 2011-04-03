@@ -1,6 +1,6 @@
 <?php
 
-require_once(dirname(__FILE__) . '/master.view.php');
+require_once(dirname(__FILE__) . '/../master.view.php');
 
 class AdminDashboardView
     extends MasterView

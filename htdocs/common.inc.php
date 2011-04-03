@@ -86,4 +86,10 @@ function echo_html($text) {
     echo htmlspecialchars($text);
 }
 
+function make_url($part) {
+    global $BTC_PROXY;
+
+    return $BTC_PROXY['site_url'] . $part;
+}
+
 ?>
