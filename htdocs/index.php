@@ -129,7 +129,7 @@ foreach ($rows as $row) {
 
             (worker_id, pool_id, data, time_requested)
                 VALUES
-            (:worker_id, :pool_id, :data, NOW())
+            (:worker_id, :pool_id, :data, UTC_TIMESTAMP())
         ');
 
         $q->execute(array(
