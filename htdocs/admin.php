@@ -62,8 +62,9 @@ $viewdata['recent-failed-submissions'] = db_query($pdo, '
 $viewdata['worker-status'] = db_query($pdo, '
     SELECT DISTINCT
         w.name AS worker,
-        p.name AS pool,
+        p.name AS active_pool,
         sub.active_time AS active_time,
+        swp.name AS last_accepted_pool,
         sw.submission_time AS last_accepted_submission
 
     FROM
@@ -93,9 +94,17 @@ $viewdata['worker-status'] = db_query($pdo, '
     ) sw
         ON sw.worker_id = sub.worker_id
 
+    LEFT OUTER JOIN submitted_work swd
+       ON swd.worker_id = sw.worker_id
+      AND swd.time = sw.submission_time
+
+    LEFT OUTER JOIN pool swp
+       ON swd.pool_id = swp.id
+
     WHERE wd.time_requested = sub.active_time
       AND wd.worker_id = sub.worker_id
       AND p.id = wd.pool_id
+
       AND w.id = sub.worker_id
 
     ORDER BY worker

@@ -82,4 +82,8 @@ function place_json_call($object, $url, $username = '', $password = '') {
     return json_decode(file_get_contents($url, false, $context));
 }
 
+function echo_html($text) {
+    echo htmlspecialchars($text);
+}
+
 ?>

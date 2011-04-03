@@ -53,22 +53,22 @@ class AdminDashboardView
 <table>
     <tr>
         <th>Worker</th>
-        <th>Last pool</th>
         <th>Last work request</th>
         <th>Last accepted submission</th>
     </tr>
     <?php foreach ($viewdata['worker-status'] as $row) { ?>
     <tr>
-        <td><?php echo htmlspecialchars($row['worker'])                   ?></td>
-        <td><?php echo htmlspecialchars($row['pool'])                     ?></td>
-        <td><?php echo htmlspecialchars($row['active_time'])              ?></td>
+        <td><?php echo htmlspecialchars($row['worker']) ?></td>
+        <td>At <?php echo_html($row['active_time']) ?> from <?php echo_html($row['active_pool']) ?></td>
         <td><?php
             $value = $row['last_accepted_submission'];
             if (!$value) {
                 $value = 'Never';
             }
 
-            echo htmlspecialchars($value);
+            $value = "At $value to " . $row['last_accepted_pool'];
+
+            echo_html($value);
         ?></td>
     </tr>
     <?php } ?>
