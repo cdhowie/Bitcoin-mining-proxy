@@ -93,12 +93,15 @@ abstract class Controller
     {
         $action = isset($_GET['action']) ? $_GET['action'] : 'index';
 
-        $action = "{$action}View";
+        $specificAction = "{$action}View{$_SERVER['REQUEST_METHOD']}";
+        $genericAction = "{$action}View";
 
         $class = new ReflectionClass($this);
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
             $name = $method->name;
-            if (strcasecmp($action, $name) == 0) {
+
+            if (    strcasecmp($specificAction, $name) == 0 ||
+                    strcasecmp($genericAction,  $name) == 0) {
                 return $this->$name();
             }
         }
