@@ -4,6 +4,9 @@ $BTC_PROXY = array(
     'db_connection_string'  => 'mysql:host=localhost;dbname=bitcoin-mining-proxy',
     'db_user'               => 'bitcoin-mining-proxy',
     'db_password'           => '',
+
+    'admin_user'            => 'admin',
+    'admin_password'        => 'changeme'
 );
 
 ?>

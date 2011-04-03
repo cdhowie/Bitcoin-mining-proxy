@@ -1,0 +1,52 @@
+body {
+    font: 10pt sans-serif;
+    color: #bbb;
+    background-color: #222;
+}
+
+table {
+    border-collapse: collapse;
+    cursor: default;
+}
+
+table, td, th {
+    border: 1px solid #bbb;
+}
+
+td, th {
+    padding: 0.5em;
+}
+
+th {
+    background-color: #444;
+}
+
+tr:hover {
+    background-color: #333;
+}
+
+tr.rejected {
+    background-color: #522;
+}
+
+tr.rejected:hover {
+    background-color: #633;
+}
+
+#recent-submissions,
+#recent-failed-submissions,
+#worker-status {
+    width: 50%;
+    margin: 0;
+    padding: 0;
+}
+
+#recent-submissions,
+#worker-status {
+    float: left;
+    clear: both;
+}
+
+#recent-failed-submissions {
+    float: right;
+}

@@ -8,6 +8,17 @@ function db_connect() {
     return new PDO($BTC_PROXY['db_connection_string'], $BTC_PROXY['db_user'], $BTC_PROXY['db_password']);
 }
 
+function db_query($pdo, $query, $args = array()) {
+    $q = $pdo->prepare($query);
+
+    $q->execute($args);
+
+    $results = $q->fetchAll(PDO::FETCH_ASSOC);
+    $q->closeCursor();
+
+    return $results;
+}
+
 function auth_fail() {
     header('WWW-Authenticate: Basic realm="bitcoin-mining-proxy"');
     header('HTTP/1.0 401 Unauthorized');
