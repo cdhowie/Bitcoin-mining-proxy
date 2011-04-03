@@ -32,6 +32,24 @@ CREATE TABLE `pool` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `submitted_work`
+--
+
+DROP TABLE IF EXISTS `submitted_work`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `submitted_work` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `worker_id` int(11) NOT NULL,
+  `pool_id` int(11) NOT NULL,
+  `result` tinyint(1) NOT NULL,
+  `time` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `worker_id` (`worker_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `work_data`
 --
 
@@ -43,7 +61,7 @@ CREATE TABLE `work_data` (
   `pool_id` int(11) NOT NULL,
   `data` char(152) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `time_requested` datetime NOT NULL,
-  PRIMARY KEY (`worker_id`,`pool_id`,`data`)
+  PRIMARY KEY (`worker_id`,`data`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -90,4 +108,4 @@ CREATE TABLE `worker_pool` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-04-01 10:14:30
+-- Dump completed on 2011-04-03  2:54:14

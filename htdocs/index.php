@@ -56,6 +56,7 @@ if (is_array($params) && count($params) == 1) {
 
     $q = $pdo->prepare('
         SELECT
+            p.id AS pool_id,
             wp.pool_username AS username,
             wp.pool_password AS password,
             p.url AS url
@@ -86,6 +87,20 @@ if (is_array($params) && count($params) == 1) {
     }
 
     $result = place_json_call($json, $row['url'], $row['username'], $row['password']);
+
+    $q = $pdo->prepare('
+        INSERT INTO submitted_work
+
+        (worker_id, pool_id, result, time)
+            VALUES
+        (:worker_id, :pool_id, :result, UTC_TIMESTAMP())
+    ');
+
+    $q->execute(array(
+        ':worker_id'    => $worker_id,
+        ':pool_id'      => $row['pool_id'],
+        ':result'       => $result->result ? 1 : 0
+    ));
 
     json_response($result);
 }
