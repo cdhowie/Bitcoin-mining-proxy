@@ -1,7 +1,7 @@
 <?php
 
-require_once('./common.inc.php');
-require_once('./views/admin-dashboard.view.php');
+require_once(dirname(__FILE__) . '/common.inc.php');
+require_once(dirname(__FILE__) . '/views/admin-dashboard.view.php');
 
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
     auth_fail();

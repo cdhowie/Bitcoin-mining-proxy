@@ -1,6 +1,6 @@
 <?php
 
-require_once('./mvc.inc.php');
+require_once(dirname(__FILE__) . '/../mvc.inc.php');
 
 abstract class MasterView
     extends ViewBase
