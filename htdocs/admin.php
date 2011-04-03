@@ -94,6 +94,7 @@ $viewdata['worker-status'] = db_query($pdo, '
         ON sw.worker_id = sub.worker_id
 
     WHERE wd.time_requested = sub.active_time
+      AND wd.worker_id = sub.worker_id
       AND p.id = wd.pool_id
       AND w.id = sub.worker_id
 
