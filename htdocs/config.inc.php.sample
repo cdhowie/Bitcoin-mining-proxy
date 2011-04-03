@@ -8,7 +8,7 @@ $BTC_PROXY = array(
     'admin_user'            => 'admin',
     'admin_password'        => 'changeme',
 
-    'site_url'              => 'http://www.example.com'
+    'site_uri'              => '/'
 );
 
 ?>

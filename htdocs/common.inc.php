@@ -86,10 +86,10 @@ function echo_html($text) {
     echo htmlspecialchars($text);
 }
 
-function make_url($part) {
+function make_url($uri) {
     global $BTC_PROXY;
 
-    return $BTC_PROXY['site_url'] . $part;
+    return $BTC_PROXY['site_uri'] . $uri;
 }
 
 function do_admin_auth() {
