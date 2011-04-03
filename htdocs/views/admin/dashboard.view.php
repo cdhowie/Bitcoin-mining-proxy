@@ -26,7 +26,7 @@ class AdminDashboardView
 <?php
     }
 
-    protected function renderBody($viewdata)
+    protected function renderBody()
     {
 ?>
 
@@ -34,7 +34,7 @@ class AdminDashboardView
 
 <h2>Recent work submissions</h2>
 
-<table><?php $this->renderWorkTable($viewdata['recent-submissions']) ?></table>
+<table><?php $this->renderWorkTable($this->viewdata['recent-submissions']) ?></table>
 
 </div>
 
@@ -42,7 +42,7 @@ class AdminDashboardView
 
 <h2>Recent failed work submissions</h2>
 
-<table><?php $this->renderWorkTable($viewdata['recent-failed-submissions']) ?></table>
+<table><?php $this->renderWorkTable($this->viewdata['recent-failed-submissions']) ?></table>
 
 </div>
 
@@ -56,7 +56,7 @@ class AdminDashboardView
         <th>Last work request</th>
         <th>Last accepted submission</th>
     </tr>
-    <?php foreach ($viewdata['worker-status'] as $row) { ?>
+    <?php foreach ($this->viewdata['worker-status'] as $row) { ?>
     <tr>
         <td><?php echo htmlspecialchars($row['worker']) ?></td>
         <td>At <?php echo_html($row['active_time']) ?> from <?php echo_html($row['active_pool']) ?></td>

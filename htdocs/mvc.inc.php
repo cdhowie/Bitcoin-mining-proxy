@@ -5,12 +5,16 @@ abstract class ViewBase
     private $renderMethod;
     private $renderHeadersMethod;
 
+    protected $viewdata;
+
     private static $viewTypes = array(
         array('Json', FALSE),
         array('Html', TRUE)
     );
 
-    function __construct($requested_type = FALSE) {
+    function __construct($viewdata, $requested_type = FALSE) {
+        $this->viewdata = $viewdata;
+
         if ($requested_type === FALSE) {
             $requested_type = $_GET['format'];
         }
@@ -40,43 +44,83 @@ abstract class ViewBase
         return TRUE;
     }
 
-    private function renderHeaders($viewdata)
+    private function renderHeaders()
     {
         $method = $this->renderHeadersMethod;
-        $this->$method($viewdata);
+        $this->$method();
     }
 
-    public function render($viewdata)
+    public function render()
     {
-        $this->renderHeaders($viewdata);
+        $this->renderHeaders();
 
         $method = $this->renderMethod;
-        $this->$method($viewdata);
+        $this->$method();
     }
 
     # Provide a default implementation for JSON.  A subclass must still
     # implement IJsonView for JSON to be supported.
-    public function renderJsonHeaders($viewdata)
+    public function renderJsonHeaders()
     {
         header('Content-Type: application/json');
     }
 
-    public function renderJson($viewdata)
+    public function renderJson()
     {
-        echo json_encode($viewdata);
+        echo json_encode($this->viewdata);
     }
 }
 
 interface IHtmlView
 {
-    public function renderHtmlHeaders($viewdata);
-    public function renderHtml($viewdata);
+    public function renderHtmlHeaders();
+    public function renderHtml();
 }
 
 interface IJsonView
 {
-    public function renderJsonHeaders($viewdata);
-    public function renderJson($viewdata);
+    public function renderJsonHeaders();
+    public function renderJson();
+}
+
+abstract class Controller
+{
+    public function preExecute()
+    {
+    }
+
+    public function execute()
+    {
+        $action = isset($_GET['action']) ? $_GET['action'] : 'index';
+
+        $action = "{$action}View";
+
+        $class = new ReflectionClass($this);
+        foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            $name = $method->name;
+            if (strcasecmp($action, $name) == 0) {
+                return $this->$name();
+            }
+        }
+
+        return $this->notFoundView();
+    }
+
+    public function notFoundView()
+    {
+        die('View method not found.');
+    }
+}
+
+class MvcEngine
+{
+    public static function run($controller)
+    {
+        $controller->preExecute();
+
+        $view = $controller->execute();
+        $view->render();
+    }
 }
 
 ?>

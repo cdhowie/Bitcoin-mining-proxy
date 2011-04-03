@@ -92,4 +92,17 @@ function make_url($part) {
     return $BTC_PROXY['site_url'] . $part;
 }
 
+function do_admin_auth() {
+    global $BTC_PROXY;
+
+    if (!isset($_SERVER['PHP_AUTH_USER'])) {
+        auth_fail();
+    }
+
+    if (    $_SERVER['PHP_AUTH_USER'] != $BTC_PROXY['admin_user'] ||
+            $_SERVER['PHP_AUTH_PW']   != $BTC_PROXY['admin_password']) {
+        auth_fail();
+    }
+}
+
 ?>

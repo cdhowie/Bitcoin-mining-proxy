@@ -1,116 +1,115 @@
 <?php
 
 require_once(dirname(__FILE__) . '/../common.inc.php');
+require_once(dirname(__FILE__) . '/../admin/controller.inc.php');
 require_once(dirname(__FILE__) . '/../views/admin/dashboard.view.php');
 
-if (!isset($_SERVER['PHP_AUTH_USER'])) {
-    auth_fail();
-}
+class AdminDashboardController extends AdminController
+{
+    public function indexView()
+    {
+        $viewdata = array(
+          'title'     => 'bitcoin-mining-proxy dashboard'
+        );
 
-if (    $_SERVER['PHP_AUTH_USER'] != $BTC_PROXY['admin_user'] ||
-        $_SERVER['PHP_AUTH_PW']   != $BTC_PROXY['admin_password']) {
-    auth_fail();
-}
+        $pdo = db_connect();
 
-$viewdata = array(
-    'title'     => 'bitcoin-mining-proxy dashboard'
-);
-
-$pdo = db_connect();
-
-$viewdata['recent-submissions'] = db_query($pdo, '
-    SELECT
-        w.name AS worker,
-        p.name AS pool,
-        sw.result AS result,
-        sw.time AS time
-
-    FROM
-        pool p,
-        worker w,
-        submitted_work sw
-
-    WHERE sw.worker_id = w.id
-      AND sw.pool_id = p.id
-
-    ORDER BY sw.id DESC
-
-    LIMIT 10
-');
-
-$viewdata['recent-failed-submissions'] = db_query($pdo, '
-    SELECT
-        w.name AS worker,
-        p.name AS pool,
-        sw.result AS result,
-        sw.time AS time
-
-    FROM
-        pool p,
-        worker w,
-        submitted_work sw
-
-    WHERE sw.worker_id = w.id
-      AND sw.pool_id = p.id
-      AND sw.result = 0
-
-    ORDER BY sw.id DESC
-
-    LIMIT 10
-');
-
-$viewdata['worker-status'] = db_query($pdo, '
-    SELECT DISTINCT
-        w.name AS worker,
-        p.name AS active_pool,
-        sub.active_time AS active_time,
-        swp.name AS last_accepted_pool,
-        sw.submission_time AS last_accepted_submission
-
-    FROM
-        work_data wd,
-        pool p,
-        worker w,
-        (
+        $viewdata['recent-submissions'] = db_query($pdo, '
             SELECT
-                worker_id,
-                MAX(time_requested) AS active_time
+                w.name AS worker,
+                p.name AS pool,
+                sw.result AS result,
+                sw.time AS time
 
-            FROM work_data
+            FROM
+                pool p,
+                worker w,
+                submitted_work sw
 
-            GROUP BY worker_id
-        ) sub
+            WHERE sw.worker_id = w.id
+              AND sw.pool_id = p.id
 
-    LEFT OUTER JOIN (
-        SELECT
-            worker_id,
-            MAX(time) AS submission_time
+            ORDER BY sw.id DESC
 
-        FROM submitted_work
+            LIMIT 10
+        ');
 
-        WHERE result = 1
+        $viewdata['recent-failed-submissions'] = db_query($pdo, '
+            SELECT
+                w.name AS worker,
+                p.name AS pool,
+                sw.result AS result,
+                sw.time AS time
 
-        GROUP BY worker_id
-    ) sw
-        ON sw.worker_id = sub.worker_id
+            FROM
+                pool p,
+                worker w,
+                submitted_work sw
 
-    LEFT OUTER JOIN submitted_work swd
-       ON swd.worker_id = sw.worker_id
-      AND swd.time = sw.submission_time
+            WHERE sw.worker_id = w.id
+              AND sw.pool_id = p.id
+              AND sw.result = 0
 
-    LEFT OUTER JOIN pool swp
-       ON swd.pool_id = swp.id
+            ORDER BY sw.id DESC
 
-    WHERE wd.time_requested = sub.active_time
-      AND wd.worker_id = sub.worker_id
-      AND p.id = wd.pool_id
+            LIMIT 10
+        ');
 
-      AND w.id = sub.worker_id
+        $viewdata['worker-status'] = db_query($pdo, '
+            SELECT DISTINCT
+                w.name AS worker,
+                p.name AS active_pool,
+                sub.active_time AS active_time,
+                swp.name AS last_accepted_pool,
+                sw.submission_time AS last_accepted_submission
 
-    ORDER BY worker
-');
+            FROM
+                work_data wd,
+                pool p,
+                worker w,
+                (
+                    SELECT
+                        worker_id,
+                        MAX(time_requested) AS active_time
 
-$view = new AdminDashboardView();
-$view->render($viewdata);
+                    FROM work_data
+
+                    GROUP BY worker_id
+                ) sub
+
+            LEFT OUTER JOIN (
+                SELECT
+                    worker_id,
+                    MAX(time) AS submission_time
+
+                FROM submitted_work
+
+                WHERE result = 1
+
+                GROUP BY worker_id
+            ) sw
+                ON sw.worker_id = sub.worker_id
+
+            LEFT OUTER JOIN submitted_work swd
+               ON swd.worker_id = sw.worker_id
+              AND swd.time = sw.submission_time
+
+            LEFT OUTER JOIN pool swp
+               ON swd.pool_id = swp.id
+
+            WHERE wd.time_requested = sub.active_time
+              AND wd.worker_id = sub.worker_id
+              AND p.id = wd.pool_id
+
+              AND w.id = sub.worker_id
+
+            ORDER BY worker
+        ');
+
+        return new AdminDashboardView($viewdata);
+    }
+}
+
+MvcEngine::run(new AdminDashboardController());
 
 ?>
