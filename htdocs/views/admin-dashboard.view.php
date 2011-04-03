@@ -55,12 +55,21 @@ class AdminDashboardView
         <th>Worker</th>
         <th>Last pool</th>
         <th>Last work request</th>
+        <th>Last accepted submission</th>
     </tr>
     <?php foreach ($viewdata['worker-status'] as $row) { ?>
     <tr>
-        <td><?php echo htmlspecialchars($row['worker'])      ?></td>
-        <td><?php echo htmlspecialchars($row['pool'])        ?></td>
-        <td><?php echo htmlspecialchars($row['active_time']) ?></td>
+        <td><?php echo htmlspecialchars($row['worker'])                   ?></td>
+        <td><?php echo htmlspecialchars($row['pool'])                     ?></td>
+        <td><?php echo htmlspecialchars($row['active_time'])              ?></td>
+        <td><?php
+            $value = $row['last_accepted_submission'];
+            if (!$value) {
+                $value = 'Never';
+            }
+
+            echo htmlspecialchars($value);
+        ?></td>
     </tr>
     <?php } ?>
 </table>

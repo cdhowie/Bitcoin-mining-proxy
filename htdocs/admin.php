@@ -63,7 +63,8 @@ $viewdata['worker-status'] = db_query($pdo, '
     SELECT DISTINCT
         w.name AS worker,
         p.name AS pool,
-        sub.active_time AS active_time
+        sub.active_time AS active_time,
+        sw.submission_time AS last_accepted_submission
 
     FROM
         work_data wd,
@@ -78,6 +79,19 @@ $viewdata['worker-status'] = db_query($pdo, '
 
             GROUP BY worker_id
         ) sub
+
+    LEFT OUTER JOIN (
+        SELECT
+            worker_id,
+            MAX(time) AS submission_time
+
+        FROM submitted_work
+
+        WHERE result = 1
+
+        GROUP BY worker_id
+    ) sw
+        ON sw.worker_id = sub.worker_id
 
     WHERE wd.time_requested = sub.active_time
       AND p.id = wd.pool_id
