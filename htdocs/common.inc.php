@@ -63,7 +63,8 @@ function place_json_call($object, $url, $username = '', $password = '') {
         'http'  => array(
             'method'    => 'POST',
             'header'    => "Content-Type: application/json-rpc\r\n$authHeader",
-            'content'   => json_encode($object)
+            'content'   => json_encode($object),
+            'timeout'   => 5
         )
     ));
 
