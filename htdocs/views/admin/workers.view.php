@@ -37,9 +37,16 @@ class AdminWorkersView
         ?></td>
     </tr>
     <?php } ?>
+    <tr>
+        <td colspan="2">&nbsp;</td>
+        <td>
+            <form action="<?php echo_html(make_url('/admin/workers.php')) ?>">
+                <input type="hidden" name="action" value="new" />
+                <input type="submit" value="New" />
+            </form>
+        </td>
+    </tr>
 </table>
-
-<a href="<?php echo_html(make_url('/admin/workers.php?action=new')) ?>">New worker</a>
 
 </div>
 
