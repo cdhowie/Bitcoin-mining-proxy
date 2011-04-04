@@ -32,11 +32,13 @@ table.data tr:hover {
     background-color: #333;
 }
 
-table.data tr.rejected {
+table.data tr.rejected,
+table.data tr.disabled {
     background-color: #522;
 }
 
-table.data tr.rejected:hover {
+table.data tr.rejected:hover,
+table.data tr.disabled:hover {
     background-color: #633;
 }
 
@@ -60,7 +62,7 @@ table.data tr.rejected:hover {
 
 #navmenu {
     list-style: none;
-    margin: 0;
+    margin: 0.75em 0;
     padding: 0;
     text-align: center;
 }
@@ -107,4 +109,14 @@ table.entry th {
 
 table.entry tr.submit {
     text-align: center;
+}
+
+input[type='submit'] {
+    color: #bbb;
+    border: 1px outset #777;
+    background-color: #333;
+}
+
+form {
+    display: inline;
 }

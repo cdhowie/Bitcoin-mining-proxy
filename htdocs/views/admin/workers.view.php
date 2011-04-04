@@ -22,7 +22,13 @@ class AdminWorkersView
     <tr>
         <td><?php echo_html($row['name'])     ?></td>
         <td><?php echo_html($row['password']) ?></td>
-        <td><?php
+        <td>
+            <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>">
+                <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
+                <input type="submit" value="Manage pools" />
+            </form>
+
+        <?php
             if ($row['pools'] == 0) {
 ?>
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="POST">
@@ -31,8 +37,6 @@ class AdminWorkersView
                 <input type="submit" value="Delete" />
             </form>
 <?php
-            } else {
-                echo '&nbsp;';
             }
         ?></td>
     </tr>
