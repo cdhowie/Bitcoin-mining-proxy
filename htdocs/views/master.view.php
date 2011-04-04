@@ -45,8 +45,8 @@ abstract class MasterView
         <h1><?php echo htmlspecialchars($this->viewdata['title']) ?></h1>
 
         <ul id="navmenu">
-            <li><a href="<?php echo_html(make_url('/admin/')) ?>">Dashboard</a></li>
-            <li><a href="<?php echo_html(make_url('/admin/workers.php')) ?>">Workers</a></li>
+            <li><a href="<?php echo_html(make_url('/admin/')) ?>"><img src="<?php echo_html(make_url('/assets/icons/report.png')) ?>" /> Dashboard</a></li>
+            <li><a href="<?php echo_html(make_url('/admin/workers.php')) ?>"><img src="<?php echo_html(make_url('/assets/icons/cog.png')) ?>" /> Workers</a></li>
         </ul>
 
 <?php

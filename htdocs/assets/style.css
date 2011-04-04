@@ -45,19 +45,10 @@ table.data tr.disabled:hover {
 #recent-submissions,
 #recent-failed-submissions,
 #worker-status {
-    width: 50%;
-    margin: 0;
-    padding: 0;
-}
-
-#recent-submissions,
-#worker-status {
     float: left;
-    clear: both;
-}
-
-#recent-failed-submissions {
-    float: right;
+    margin: 2em;
+    margin-left: 0;
+    padding: 0;
 }
 
 #navmenu {
@@ -81,11 +72,24 @@ table.data tr.disabled:hover {
     border: 1px solid transparent;
 }
 
-#navmenu li a:hover {
-    x-color: #222;
-    x-background-color: #bbb;
+#recent-submissions h2,
+#recent-failed-submissions h2,
+#worker-status h2 {
+    padding-left: 22px;
+    background-repeat: no-repeat;
+    background-position: left center;
+}
 
-    border-color: #bbb;
+#recent-submissions h2 {
+    background-image: url('icons/page_go.png');
+}
+
+#recent-failed-submissions h2 {
+    background-image: url('icons/page_error.png');
+}
+
+#worker-status h2 {
+    background-image: url('icons/cog.png');
 }
 
 a:link, a:active, a:visited, a:hover {
@@ -111,12 +115,31 @@ table.entry tr.submit {
     text-align: center;
 }
 
-input[type='submit'] {
+input[type='submit'],
+#navmenu li a:hover {
     color: #bbb;
     border: 1px outset #777;
     background-color: #333;
 }
 
 form {
+    display: inline;
+}
+
+img,
+input[type='image'] {
+    border: none;
+    vertical-align: bottom;
+}
+
+tr:hover .row-hover-hide {
+    display: none;
+}
+
+tr .row-hover-show {
+    display: none;
+}
+
+tr:hover .row-hover-show {
     display: inline;
 }

@@ -11,7 +11,7 @@ class AdminWorkerPoolController extends AdminController
         $id = (int)$_GET['id'];
 
         if ($id == 0) {
-            return new RedirectView(make_url('/admin/workers.php'));
+            return new RedirectView('/admin/workers.php');
         }
 
         $pdo = db_connect();
@@ -25,7 +25,7 @@ class AdminWorkerPoolController extends AdminController
         ', array(':worker_id' => $id));
 
         if (count($name) == 0) {
-            return new RedirectView(make_url('/admin/workers.php'));
+            return new RedirectView('/admin/workers.php');
         }
 
         $name = $name[0]['name'];
@@ -58,6 +58,42 @@ class AdminWorkerPoolController extends AdminController
         ', array(':worker_id' => $id));
 
         return new AdminWorkerPoolView($viewdata);
+    }
+
+    public function setEnabledPostView()
+    {
+        $id = (int)$_POST['id'];
+
+        if ($id == 0) {
+            return new RedirectView('/admin/workers.php');
+        }
+
+        $enabled = (int)$_POST['enabled'];
+        $pool = (int)$_POST['pool-id'];
+
+        $pdo = db_connect();
+
+        $q = $pdo->prepare('
+            UPDATE worker_pool
+
+            SET enabled = :enabled
+
+            WHERE worker_id = :worker_id
+              AND pool_id = :pool_id
+        ');
+
+        $q->execute(array(
+            ':enabled'      => $enabled,
+            ':pool_id'      => $pool,
+            ':worker_id'    => $id
+        ));
+
+        if (!$q->rowCount()) {
+            $_SESSION['tempdata']['errors'][] =
+                sprintf('Pool not found or not affected.');
+        }
+
+        return new RedirectView("/admin/worker-pool.php?id=$id");
     }
 }
 

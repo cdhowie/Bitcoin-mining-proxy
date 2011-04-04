@@ -25,7 +25,8 @@ class AdminWorkersView
         <td>
             <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>">
                 <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                <input type="submit" value="Manage pools" />
+                <input type="image" title="Manage pools" alt="Manage pools"
+                    src="<?php echo_html(make_url('/assets/icons/server_go.png')) ?>" />
             </form>
 
         <?php
@@ -34,7 +35,8 @@ class AdminWorkersView
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="POST">
                 <input type="hidden" name="action" value="delete" />
                 <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                <input type="submit" value="Delete" />
+                <input type="image" title="Delete worker" alt="Delete worker"
+                    src="<?php echo_html(make_url('/assets/icons/cog_delete.png')) ?>" />
             </form>
 <?php
             }
@@ -46,7 +48,8 @@ class AdminWorkersView
         <td>
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>">
                 <input type="hidden" name="action" value="new" />
-                <input type="submit" value="New" />
+                <input type="image" title="New worker" alt="New worker"
+                    src="<?php echo_html(make_url('/assets/icons/cog_add.png')) ?>" />
             </form>
         </td>
     </tr>
