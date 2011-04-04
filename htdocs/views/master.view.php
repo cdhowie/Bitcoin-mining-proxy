@@ -12,6 +12,24 @@ abstract class MasterView
     {
     }
 
+    protected function displayNoticeList($key)
+    {
+        $notices = get_tempdata($key);
+
+        if (count($notices) == 0) {
+            return;
+        }
+
+?>
+    <ul class="<?php echo_html($key) ?>">
+    <?php foreach ($notices as $notice) { ?>
+        <li><?php echo_html($notice) ?></li>
+    <?php } ?>
+    </ul>
+<?php
+
+    }
+
     public function renderHtml()
     {
         echo '<?xml version="1.0" encoding="UTF-8" ?>';
@@ -31,7 +49,12 @@ abstract class MasterView
             <li><a href="<?php echo_html(make_url('/admin/workers.php')) ?>">Workers</a></li>
         </ul>
 
-<?php $this->renderBody() ?>
+<?php
+    $this->displayNoticeList('errors');
+    $this->displayNoticeList('info');
+
+    $this->renderBody();
+?>
 
     </body>
 </html>

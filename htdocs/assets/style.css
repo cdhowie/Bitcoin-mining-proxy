@@ -8,32 +8,35 @@ body {
     background-color: #222;
 }
 
-table {
+table.data {
     border-collapse: collapse;
     cursor: default;
 }
 
-table, td, th {
+table.data,
+table.data td,
+table.data th {
     border: 1px solid #bbb;
 }
 
-td, th {
+table.data td,
+table.data th {
     padding: 0.5em;
 }
 
-th {
+table.data th {
     background-color: #444;
 }
 
-tr:hover {
+table.data tr:hover {
     background-color: #333;
 }
 
-tr.rejected {
+table.data tr.rejected {
     background-color: #522;
 }
 
-tr.rejected:hover {
+table.data tr.rejected:hover {
     background-color: #633;
 }
 
@@ -81,4 +84,27 @@ tr.rejected:hover {
     x-background-color: #bbb;
 
     border-color: #bbb;
+}
+
+a:link, a:active, a:visited, a:hover {
+    color: inherit;
+}
+
+a:hover {
+    color: #fff;
+}
+
+table.entry,
+table.entry td,
+table.entry th {
+    border: none;
+}
+
+table.entry th {
+    font-weight: normal;
+    text-align: right;
+}
+
+table.entry tr.submit {
+    text-align: center;
 }

@@ -34,7 +34,7 @@ class AdminDashboardView
 
 <h2>Recent work submissions</h2>
 
-<table><?php $this->renderWorkTable($this->viewdata['recent-submissions']) ?></table>
+<table class="data"><?php $this->renderWorkTable($this->viewdata['recent-submissions']) ?></table>
 
 </div>
 
@@ -42,7 +42,7 @@ class AdminDashboardView
 
 <h2>Recent failed work submissions</h2>
 
-<table><?php $this->renderWorkTable($this->viewdata['recent-failed-submissions']) ?></table>
+<table class="data"><?php $this->renderWorkTable($this->viewdata['recent-failed-submissions']) ?></table>
 
 </div>
 
@@ -50,7 +50,7 @@ class AdminDashboardView
 
 <h2>Worker status</h2>
 
-<table>
+<table class="data">
     <tr>
         <th>Worker</th>
         <th>Last work request</th>

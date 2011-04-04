@@ -2,6 +2,8 @@
 
 require_once(dirname(__FILE__) . '/config.inc.php');
 
+session_start();
+
 function db_connect() {
     global $BTC_PROXY;
 
@@ -92,6 +94,26 @@ function make_url($uri) {
     return $BTC_PROXY['site_uri'] . $uri;
 }
 
+function make_absolute_url($uri)
+{
+    global $BTC_PROXY;
+
+    if (isset($_SERVER['HTTPS'])) {
+        $scheme = 'https';
+        $default_port = 443;
+    } else {
+        $scheme = 'http';
+        $default_port = 80;
+    }
+
+    $port = ($default_port == $_SERVER['SERVER_PORT']) ? "" :
+        ":" . $_SERVER['SERVER_PORT'];
+
+    $base = "$scheme://{$_SERVER['SERVER_NAME']}$port{$BTC_PROXY['site_uri']}";
+
+    return $base . $uri;
+}
+
 function do_admin_auth() {
     global $BTC_PROXY;
 
@@ -103,6 +125,15 @@ function do_admin_auth() {
             $_SERVER['PHP_AUTH_PW']   != $BTC_PROXY['admin_password']) {
         auth_fail();
     }
+}
+
+function get_tempdata($key)
+{
+    $value = $_SESSION['tempdata'][$key];
+
+    unset($_SESSION['tempdata'][$key]);
+
+    return $value;
 }
 
 ?>

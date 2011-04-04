@@ -6,7 +6,7 @@ require_once(dirname(__FILE__) . '/../views/admin/dashboard.view.php');
 
 class AdminDashboardController extends AdminController
 {
-    public function indexView()
+    public function indexDefaultView()
     {
         $viewdata = array(
           'title'     => 'bitcoin-mining-proxy dashboard'

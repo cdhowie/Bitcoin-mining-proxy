@@ -91,10 +91,13 @@ abstract class Controller
 
     public function execute()
     {
-        $action = isset($_GET['action']) ? $_GET['action'] : 'index';
+        $action =
+            isset($_GET['action']) ? $_GET['action'] :
+            (isset($_POST['action']) ? $_POST['action'] :
+            'index');
 
-        $specificAction = "{$action}View{$_SERVER['REQUEST_METHOD']}";
-        $genericAction = "{$action}View";
+        $specificAction = "{$action}{$_SERVER['REQUEST_METHOD']}View";
+        $genericAction = "{$action}DefaultView";
 
         $class = new ReflectionClass($this);
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
@@ -123,6 +126,28 @@ class MvcEngine
 
         $view = $controller->execute();
         $view->render();
+    }
+}
+
+class RedirectView extends ViewBase
+    implements IHtmlView, IJsonView
+{
+    public function renderHtmlHeaders()
+    {
+        header('Location: ' . make_absolute_url($this->viewdata));
+    }
+
+    public function renderJsonHeaders()
+    {
+        $this->renderHtmlHeaders();
+    }
+
+    public function renderHtml()
+    {
+    }
+
+    public function renderJson()
+    {
     }
 }
 
