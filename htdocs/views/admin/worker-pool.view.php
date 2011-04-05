@@ -1,9 +1,10 @@
 <?php
 
+require_once(dirname(__FILE__) . '/workers.view.php');
 require_once(dirname(__FILE__) . '/../master.view.php');
 
 class AdminWorkerPoolView
-    extends MasterView
+    extends WorkersView
     implements IJsonView
 {
     protected function getTitle()
@@ -35,19 +36,21 @@ class AdminWorkerPoolView
                 $indicator = $row['enabled'] ? 'flag_green.png' : 'flag_red.png';
                 $newstatus = $row['enabled'] ? 0 : 1;
             ?>
-            <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>" method="POST">
-                <input type="hidden" name="id" value="<?php echo_html($this->viewdata['worker-id']) ?>" />
-                <input type="hidden" name="pool-id" value="<?php echo_html($row['pool-id']) ?>" />
-                <input type="hidden" name="action" value="setEnabled" />
-                <input type="hidden" name="enabled" value="<?php echo_html($newstatus) ?>" />
-                <input type="image" src="<?php echo_html(make_url("/assets/icons/$indicator")) ?>" />
+            <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>" method="post">
+                <fieldset>
+                    <input type="hidden" name="id" value="<?php echo_html($this->viewdata['worker-id']) ?>" />
+                    <input type="hidden" name="pool-id" value="<?php echo_html($row['pool-id']) ?>" />
+                    <input type="hidden" name="action" value="setEnabled" />
+                    <input type="hidden" name="enabled" value="<?php echo_html($newstatus) ?>" />
+                    <input type="image" title="Toggle" alt="<?php echo_html($row['enabled'] ? 'Yes' : 'No') ?>" src="<?php echo_html(make_url("/assets/icons/$indicator")) ?>" />
+                </fieldset>
             </form>
         </td>
         <td>
             <?php
                 $indicator = $row['pool-enabled'] ? 'flag_green.png' : 'flag_red.png';
             ?>
-            <img src="<?php echo_html(make_url("/assets/icons/$indicator")) ?>" />
+            <img alt="<?php echo_html($row['pool-enabled'] ? 'Yes' : 'No') ?>" src="<?php echo_html(make_url("/assets/icons/$indicator")) ?>" />
         </td>
         <td><?php echo_html($row['username']) ?></td>
         <td><?php echo_html($row['password']) ?></td>

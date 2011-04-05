@@ -11,6 +11,11 @@ class AdminDashboardView
         return "Dashboard";
     }
 
+    protected function getMenuId()
+    {
+        return "dashboard";
+    }
+
     private function renderWorkTable($rows)
     {
 ?>

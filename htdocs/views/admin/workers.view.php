@@ -2,8 +2,17 @@
 
 require_once(dirname(__FILE__) . '/../master.view.php');
 
-class AdminWorkersView
+abstract class WorkersView
     extends MasterView
+{
+    protected function getMenuId()
+    {
+        return "workers";
+    }
+}
+
+class AdminWorkersView
+    extends WorkersView
     implements IJsonView
 {
     protected function getTitle()
@@ -29,25 +38,30 @@ class AdminWorkersView
         <td><?php echo_html($row['password']) ?></td>
         <td>
             <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>">
-                <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                <input type="image" title="Manage pools" alt="Manage pools"
-                    src="<?php echo_html(make_url('/assets/icons/server_go.png')) ?>" />
+                <fieldset>
+                    <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
+                    <input type="image" title="Manage pools" alt="Manage pools"
+                        src="<?php echo_html(make_url('/assets/icons/server_go.png')) ?>" />
+                </fieldset>
             </form>
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="get">
-                <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                <input type="hidden" name="action" value="edit" />
-                <input type="image" title="Edit worker" alt="Edit worker"
-                    src="<?php echo_html(make_url('/assets/icons/cog_edit.png')) ?>" />
+                <fieldset>
+                    <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
+                    <input type="hidden" name="action" value="edit" />
+                    <input type="image" title="Edit worker" alt="Edit worker"
+                        src="<?php echo_html(make_url('/assets/icons/cog_edit.png')) ?>" />
+                </fieldset>
             </form>
-
         <?php
             if ($row['pools'] == 0) {
 ?>
-            <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="POST">
-                <input type="hidden" name="action" value="delete" />
-                <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                <input type="image" title="Delete worker" alt="Delete worker"
-                    src="<?php echo_html(make_url('/assets/icons/cog_delete.png')) ?>" />
+            <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="post">
+                <fieldset>
+                    <input type="hidden" name="action" value="delete" />
+                    <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
+                    <input type="image" title="Delete worker" alt="Delete worker"
+                        src="<?php echo_html(make_url('/assets/icons/cog_delete.png')) ?>" />
+                </fieldset>
             </form>
 <?php
             }
@@ -58,9 +72,11 @@ class AdminWorkersView
         <td colspan="2">&nbsp;</td>
         <td>
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>">
-                <input type="hidden" name="action" value="new" />
-                <input type="image" title="New worker" alt="New worker"
-                    src="<?php echo_html(make_url('/assets/icons/cog_add.png')) ?>" />
+                <fieldset>
+                    <input type="hidden" name="action" value="new" />
+                    <input type="image" title="New worker" alt="New worker"
+                        src="<?php echo_html(make_url('/assets/icons/cog_add.png')) ?>" />
+                </fieldset>
             </form>
         </td>
     </tr>
@@ -73,7 +89,7 @@ class AdminWorkersView
 }
 
 class AdminWorkerNewEditView
-    extends MasterView
+    extends WorkersView
 {
     protected function getTitle()
     {
@@ -101,7 +117,8 @@ class AdminWorkerNewEditView
 
 <div id="<?php echo $this->getDivId() ?>">
 
-<form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="POST">
+<form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="post">
+<fieldset>
 <input type="hidden" name="action" value="<?php echo $this->getAction() ?>" />
 <?php if ($this->viewdata['worker']->id) { ?>
 <input type="hidden" name="id" value="<?php echo_html($this->viewdata['worker']->id) ?>" />
@@ -120,6 +137,7 @@ class AdminWorkerNewEditView
         <td><input type="submit" value="<?php echo $this->getSubmitValue() ?>" /></td>
     </tr>
 </table>
+</fieldset>
 </form>
 
 </div>
