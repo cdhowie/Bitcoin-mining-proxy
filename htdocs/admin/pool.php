@@ -12,11 +12,21 @@ class AdminPoolController extends AdminController
         $pdo = db_connect();
 
         $rows = db_query($pdo, '
-            SELECT id, name, url, enabled
+            SELECT
+                p.id AS id,
+                p.name AS name,
+                p.url AS url,
+                p.enabled AS enabled,
+                COUNT(wp.worker_id) AS worker_count
 
-            FROM pool
+            FROM pool p
 
-            ORDER BY name
+            LEFT OUTER JOIN worker_pool wp
+            ON p.id = wp.pool_id
+
+            GROUP BY p.id
+
+            ORDER BY p.name
         ');
 
         foreach ($rows as $row) {
@@ -29,7 +39,42 @@ class AdminPoolController extends AdminController
     public function toggleEnabledDefaultView(PoolModel $pool)
     {
         if (!$pool->toggleEnabled()) {
-            $_SERVER['tempdata']['errors'][] = 'Unable to toggle that pool.';
+            $_SESSION['tempdata']['errors'][] = 'Unable to toggle that pool.';
+        }
+
+        return new RedirectView('/admin/pool.php');
+    }
+
+    public function editGetView(PoolModel $pool)
+    {
+        if (!$pool->refresh()) {
+            $_SESSION['tempdata']['errors'][] = 'Pool not found.';
+            return new RedirectView('/admin/pool.php');
+        }
+
+        return new AdminEditPoolView(array('pool' => $pool));
+    }
+
+    public function newGetView()
+    {
+        return new AdminEditPoolView(array('pool' => new PoolModel()));
+    }
+
+    public function editPostView(PoolModel $pool)
+    {
+        $errors = $pool->validate();
+
+        if ($errors !== TRUE) {
+            $_SESSION['tempdata']['errors'] =
+                array_merge((array)$_SESSION['tempdata']['errors'], $errors);
+
+            return new AdminEditPoolView(array('pool' => $pool));
+        }
+
+        if (!$pool->save()) {
+            $_SESSION['tempdata']['errors'] = 'Cannot save pool.  Another pool with the same name may already exist.';
+
+            return new AdminEditPoolView(array('pool' => $pool));
         }
 
         return new RedirectView('/admin/pool.php');

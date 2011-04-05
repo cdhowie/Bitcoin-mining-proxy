@@ -10,13 +10,18 @@ class PoolModel
     public $url;
     public $enabled;
 
+    public $worker_count;
+
     function __construct($form = FALSE)
     {
         if ($form !== FALSE) {
             $this->id = $form['id'];
+
             $this->name = $form['name'];
             $this->url = $form['url'];
             $this->enabled = $form['enabled'];
+
+            $this->worker_count = $form['worker_count'];
 
             $this->canonize();
         }
@@ -25,9 +30,12 @@ class PoolModel
     public function canonize()
     {
         $this->id = (int)$this->id;
+
         $this->name = trim($this->name);
         $this->url = trim($this->url);
         $this->enabled = $this->enabled ? 1 : 0;
+
+        $this->worker_count = (int)$this->worker_count;
     }
 
     public function toggleEnabled()
@@ -67,11 +75,18 @@ class PoolModel
         $pdo = db_connect();
 
         $q = $pdo->prepare('
-            SELECT name, enabled, url
+            SELECT
+                p.name AS name,
+                p.enabled AS enabled,
+                p.url AS url,
+                COUNT(wp.worker_id) AS worker_count
 
-            FROM pool
+            FROM pool p
 
-            WHERE id = :pool_id
+            LEFT OUTER JOIN worker_pool wp
+            ON p.id = :pool_id
+
+            WHERE p.id = :pool_id
         ');
 
         if (!$q->execute(array(':pool_id' => $id))) {
@@ -86,9 +101,55 @@ class PoolModel
         }
 
         $this->id = $id;
+
         $this->name = $row['name'];
         $this->url = $row['url'];
         $this->enabled = $row['enabled'];
+
+        $this->worker_count = $row['worker_count'];
+
+        return TRUE;
+    }
+
+    public function save()
+    {
+        if (!$this->validate()) {
+            return FALSE;
+        }
+
+        $pdo = db_connect();
+
+        $params = array(
+            ':name'     => $this->name,
+            ':enabled'  => $this->enabled,
+            ':url'      => $this->url
+        );
+
+        if ($this->id) {
+            $q = $pdo->prepare('
+                UPDATE pool
+
+                SET name = :name,
+                    url = :url,
+                    enabled = :enabled
+
+                WHERE id = :id
+            ');
+
+            $params[':id'] = $this->id;
+        } else {
+            $q = $pdo->prepare('
+                INSERT INTO pool
+
+                (name, url, enabled)
+                    VALUES
+                (:name, :url, :enabled)
+            ');
+        }
+
+        if (!$q->execute($params)) {
+            return FALSE;
+        }
 
         return TRUE;
     }

@@ -49,7 +49,21 @@ class AdminPoolsView
             </form>
         </td>
         <td><?php echo_html($pool->url) ?></td>
-        <td>&nbsp;</td>
+        <td>
+            <form action="<?php echo_html(make_url('/admin/pool.php')) ?>" method="get">
+                <fieldset>
+                    <input type="hidden" name="id" value="<?php echo_html($pool->id) ?>" />
+                    <input type="image" title="Edit pool" alt="Edit pool"
+                        name="action" value="edit"
+                        src="<?php echo_html(make_url("/assets/icons/server_edit.png")) ?>" />
+                    <?php if (!$pool->worker_count) { ?>
+                    <input type="image" title="Delete pool" alt="Delete pool"
+                        name="action" value="delete"
+                        src="<?php echo_html(make_url("/assets/icons/server_delete.png")) ?>" />
+                    <?php } ?>
+                </fieldset>
+            </form>
+        </td>
     </tr>
     <?php } ?>
     <tr>
@@ -65,6 +79,59 @@ class AdminPoolsView
         </td>
     </tr>
 </table>
+
+</div>
+
+<?php
+    }
+}
+
+class AdminEditPoolView
+    extends PoolView
+{
+    protected function getTitle()
+    {
+        $pool = $this->viewdata['pool'];
+
+        return $pool->id ? "Edit pool - {$pool->name}" : 'New pool';
+    }
+
+    protected function renderBody()
+    {
+        $pool = $this->viewdata['pool'];
+
+?>
+
+<div id="edit-pool">
+
+<form action="<?php echo_html(make_url('/admin/pool.php')) ?>" method="post">
+<fieldset>
+    <input type="hidden" name="action" value="edit" />
+    <?php if ($pool->id) { ?>
+    <input type="hidden" name="id" value="<?php echo_html($pool->id) ?>" />
+    <?php } ?>
+</fieldset>
+
+<table class="entry centered">
+    <tr>
+        <th>Name:</th>
+        <td><input type="text" name="name" size="50" value="<?php echo_html($pool->name) ?>" /></td>
+    </tr>
+    <tr>
+        <th>Enabled:</th>
+        <td><input type="checkbox" name="enabled" value="1" <?php if ($pool->enabled) { ?>checked="checked"<?php } ?> /></td>
+    </tr>
+    <tr>
+        <th>URL:</th>
+        <td><input type="text" name="url" size="50" value="<?php echo_html($pool->url) ?>" /></td>
+    </tr>
+    <tr class="submit">
+        <td>&nbsp;</td>
+        <td><input type="submit" value="<?php echo_html($pool->id ? 'Save changes' : 'Create pool') ?>" /></td>
+    </tr>
+</table>
+
+</form>
 
 </div>
 
