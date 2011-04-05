@@ -8,6 +8,13 @@ body {
     background-color: #222;
 }
 
+h1 {
+    font-weight: bold;
+    font-size: 240%;
+
+    text-align: center;
+}
+
 table.data {
     border-collapse: collapse;
     cursor: default;
@@ -42,13 +49,23 @@ table.data tr.disabled:hover {
     background-color: #633;
 }
 
+.centered {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#dashboard {
+    text-align: center;
+}
+
 #recent-submissions,
 #recent-failed-submissions,
 #worker-status {
-    float: left;
-    margin: 2em;
-    margin-left: 0;
+    margin: 0 1em;
     padding: 0;
+
+    display: inline-block;
+    text-align: left;
 }
 
 #navmenu {

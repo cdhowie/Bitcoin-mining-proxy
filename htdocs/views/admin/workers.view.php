@@ -26,7 +26,7 @@ class AdminWorkersView
 
 <div id="workers">
 
-<table class="data">
+<table class="data centered">
     <tr>
         <th>Name</th>
         <th>Password</th>
@@ -118,12 +118,15 @@ class AdminWorkerNewEditView
 <div id="<?php echo $this->getDivId() ?>">
 
 <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="post">
+
 <fieldset>
 <input type="hidden" name="action" value="<?php echo $this->getAction() ?>" />
 <?php if ($this->viewdata['worker']->id) { ?>
 <input type="hidden" name="id" value="<?php echo_html($this->viewdata['worker']->id) ?>" />
 <?php } ?>
-<table class="entry">
+</fieldset>
+
+<table class="entry centered">
     <tr>
         <th><label for="name">Name:</label></th>
         <td><input name="name" id="name" size="25" value="<?php echo_html($this->viewdata['worker']->name) ?>" /></td>
@@ -137,7 +140,7 @@ class AdminWorkerNewEditView
         <td><input type="submit" value="<?php echo $this->getSubmitValue() ?>" /></td>
     </tr>
 </table>
-</fieldset>
+
 </form>
 
 </div>

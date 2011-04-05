@@ -40,6 +40,8 @@ class AdminDashboardView
     {
 ?>
 
+<div id="dashboard">
+
 <div id="recent-submissions">
 
 <h2>Recent work submissions</h2>
@@ -55,6 +57,8 @@ class AdminDashboardView
 <table class="data"><?php $this->renderWorkTable($this->viewdata['recent-failed-submissions']) ?></table>
 
 </div>
+
+<br />
 
 <div id="worker-status">
 
@@ -92,6 +96,8 @@ class AdminDashboardView
     </tr>
     <?php } ?>
 </table>
+
+</div>
 
 </div>
 

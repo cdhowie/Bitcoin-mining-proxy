@@ -18,7 +18,7 @@ class AdminWorkerPoolView
 
 <div id="worker-pools">
 
-<table class="data">
+<table class="data centered">
     <tr>
         <th>Pool</th>
         <th>Priority</th>
@@ -111,8 +111,9 @@ class WorkerPoolEditView
 <input type="hidden" name="action" value="edit" />
 <input type="hidden" name="worker_id" value="<?php echo_html($model->worker_id) ?>" />
 <input type="hidden" name="pool_id" value="<?php echo_html($model->pool_id) ?>" />
+</fieldset>
 
-<table class="entry">
+<table class="entry centered">
     <tr>
         <th>Worker:</th>
         <td><?php echo_html($model->worker_name) ?></td>
@@ -145,7 +146,6 @@ class WorkerPoolEditView
     </tr>
 </table>
 
-</fieldset>
 </form>
 
 </div>
