@@ -1,5 +1,7 @@
 <?php
 
+require_once(dirname(__FILE__) . '/../common.inc.php');
+
 class WorkerPoolModel
 {
     public $pool_id;

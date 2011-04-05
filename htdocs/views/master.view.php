@@ -8,6 +8,7 @@ abstract class MasterView
 {
     private static $menuitems = array(
         array('dashboard', 'Dashboard', '/admin/'),
+        array('pools',     'Pools',     '/admin/pool.php'),
         array('workers',   'Workers',   '/admin/workers.php')
     );
 
@@ -25,6 +26,7 @@ abstract class MasterView
 
     public function renderHtmlHeaders()
     {
+        header('Content-Type: application/xhtml+xml');
     }
 
     protected function displayNoticeList($key)

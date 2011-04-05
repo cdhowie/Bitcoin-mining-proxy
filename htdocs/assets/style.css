@@ -127,6 +127,10 @@ table.data tr.disabled:hover {
     background-image: url('icons/report.png');
 }
 
+#navmenu #nav-pools a span {
+    background-image: url('icons/server.png');
+}
+
 #navmenu #nav-workers a span {
     background-image: url('icons/cog.png');
 }
