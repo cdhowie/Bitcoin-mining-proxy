@@ -73,6 +73,8 @@ abstract class MasterView
             <?php } ?>
         </ul>
 
+        <div id="content">
+
 <?php
     $this->displayNoticeList('errors');
     $this->displayNoticeList('info');
@@ -80,6 +82,14 @@ abstract class MasterView
     $this->renderBody();
 ?>
 
+        </div>
+
+        <div id="footer">
+            bitcoin-mining-proxy &copy; 2011 <a href="http://www.chrishowie.com">Chris Howie</a>.
+
+            This software may be distributed or hosted under the terms of the
+            <a href="http://www.gnu.org/licenses/agpl.html">GNU Affero General Public License</a>, version 3 or later.
+        </div>
     </body>
 </html>
 

@@ -1,11 +1,15 @@
 html {
     overflow: -moz-scrollbars-vertical;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font: 10pt sans-serif;
     color: #bbb;
     background-color: #222;
+    margin: 0;
+    padding: 0;
 }
 
 h1 {
@@ -47,6 +51,24 @@ table.data tr.disabled {
 table.data tr.rejected:hover,
 table.data tr.disabled:hover {
     background-color: #633;
+}
+
+#footer {
+    text-align: center;
+
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+
+    width: 100%;
+
+    padding: 0.5em 0;
+
+    background-color: #222;
+}
+
+#content {
+    padding-bottom: 7.5em;
 }
 
 .centered {
