@@ -2,6 +2,7 @@
 
 require_once(dirname(__FILE__) . '/../common.inc.php');
 require_once(dirname(__FILE__) . '/../admin/controller.inc.php');
+require_once(dirname(__FILE__) . '/../models/worker.inc.php');
 require_once(dirname(__FILE__) . '/../views/admin/workers.view.php');
 
 class AdminWorkersController extends AdminController
@@ -34,60 +35,68 @@ class AdminWorkersController extends AdminController
 
     public function newGetView()
     {
-        return new AdminWorkersNewView(array());
+        return new AdminWorkerNewEditView(array('worker' => new WorkerModel()));
     }
 
     public function newPostView()
     {
-        $viewdata = array(
-            'form'  => $_POST
-        );
+        $worker = new WorkerModel($_POST);
 
-        $name = trim($_POST['name']);
-        $password = trim($_POST['password']);
-
-        $valid = true;
-
-        if ($name == '') {
-            $_SESSION['tempdata']['errors'][] = 'Worker name is required.';
-            $valid = false;
-        } elseif (strpos($name, ':') !== FALSE) {
-            $_SESSION['tempdata']['errors'][] = 'Worker name may not contain a colon.';
-            $valid = false;
-        }
-
-        if ($password == '') {
-            $_SESSION['tempdata']['errors'][] = 'Worker password is required.';
-            $valid = false;
-        }
+        $result = $worker->validate();
+        $valid = $result === TRUE;
 
         if ($valid) {
             $pdo = db_connect();
 
-            $q = $pdo->prepare('
-                INSERT INTO worker
+            if ($worker->id) {
+                $q = $pdo->prepare('
+                    UPDATE worker
 
-                (name, password)
-                    VALUES
-                (:name, :password)
-            ');
+                    SET name = :name,
+                        password = :password
 
-            $result = $q->execute(array(
-                ':name'     => $name,
-                ':password' => $password
-            ));
+                    WHERE id = :id
+                ');
+
+                $q_args = array(
+                    ':name'     => $worker->name,
+                    ':password' => $worker->password,
+                    ':id'       => $worker->id
+                );
+            } else {
+                $q = $pdo->prepare('
+                    INSERT INTO worker
+
+                    (name, password)
+                        VALUES
+                    (:name, :password)
+                ');
+
+                $q_args = array(
+                    ':name'     => $worker->name,
+                    ':password' => $worker->password
+                );
+            }
+
+            $result = $q->execute($q_args);
 
             if (!$result) {
-                $_SESSION['tempdata']['errors'][] = 'Unable to create worker.  A worker with the same name probably exists.';
+                $_SESSION['tempdata']['errors'][] =
+                    sprintf('Unable to %s worker.  A worker with the same name probably exists.',
+                        $worker->id ? 'modify' : 'create');
+
                 $valid = false;
             }
+        } else {
+            $_SESSION['tempdata']['errors'] =
+                array_merge((array)$_SESSION['tempdata']['errors'], $result);
         }
 
         if (!$valid) {
-            return new AdminWorkersNewView($viewdata);
+            return new AdminWorkerNewEditView(array('worker' => $worker));
         }
 
-        $_SESSION['tempdata']['info'][] = 'Worker created.';
+        $_SESSION['tempdata']['info'][] = $worker->id ? 'Changes saved.' : 'Worker created.';
 
         return new RedirectView('/admin/workers.php');
     }
@@ -146,6 +155,41 @@ class AdminWorkersController extends AdminController
 
         $_SESSION['tempdata']['info'][] = 'Worker deleted.';
         return new RedirectView('/admin/workers.php');
+    }
+
+    public function editGetView()
+    {
+        $id = (int)$_GET['id'];
+
+        if ($id == 0) {
+            return new RedirectView('/admin/workers.php');
+        }
+
+        $pdo = db_connect();
+
+        $q = $pdo->prepare('
+            SELECT id, name, password
+
+            FROM worker
+
+            WHERE id = :worker_id
+        ');
+
+        $q->execute(array(':worker_id' => $id));
+
+        $row = $q->fetch(PDO::FETCH_ASSOC);
+
+        if ($row === FALSE) {
+            $_SESSION['tempdata']['errors'][] = 'Worker not found.';
+            return new RedirectView('/admin/workers.php');
+        }
+
+        return new AdminWorkerNewEditView(array('worker' => new WorkerModel($row)));
+    }
+
+    public function editPostView()
+    {
+        return $this->newPostView();
     }
 }
 

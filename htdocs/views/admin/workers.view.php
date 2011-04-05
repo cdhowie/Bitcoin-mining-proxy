@@ -33,6 +33,12 @@ class AdminWorkersView
                 <input type="image" title="Manage pools" alt="Manage pools"
                     src="<?php echo_html(make_url('/assets/icons/server_go.png')) ?>" />
             </form>
+            <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="get">
+                <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
+                <input type="hidden" name="action" value="edit" />
+                <input type="image" title="Edit worker" alt="Edit worker"
+                    src="<?php echo_html(make_url('/assets/icons/cog_edit.png')) ?>" />
+            </form>
 
         <?php
             if ($row['pools'] == 0) {
@@ -66,33 +72,52 @@ class AdminWorkersView
     }
 }
 
-class AdminWorkersNewView
+class AdminWorkerNewEditView
     extends MasterView
 {
     protected function getTitle()
     {
-        return "New worker";
+        return $this->viewdata['worker']->id ? 'Edit worker' : 'New worker';
+    }
+
+    protected function getDivId()
+    {
+        return $this->viewdata['worker']->id ? 'edit-worker' : 'new-worker';
+    }
+
+    protected function getAction()
+    {
+        return $this->viewdata['worker']->id ? 'edit' : 'new';
+    }
+
+    protected function getSubmitValue()
+    {
+        return $this->viewdata['worker']->id ? 'Save changes' : 'Create worker';
     }
 
     protected function renderBody()
     {
 ?>
 
-<div id="new-worker">
+<div id="<?php echo $this->getDivId() ?>">
 
-<form action="<?php echo_html($_SERVER['REQUEST_URI']) ?>" method="POST">
+<form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="POST">
+<input type="hidden" name="action" value="<?php echo $this->getAction() ?>" />
+<?php if ($this->viewdata['worker']->id) { ?>
+<input type="hidden" name="id" value="<?php echo_html($this->viewdata['worker']->id) ?>" />
+<?php } ?>
 <table class="entry">
     <tr>
         <th><label for="name">Name:</label></th>
-        <td><input name="name" id="name" size="25" value="<?php echo_html($this->viewdata['form']['name']) ?>" /></td>
+        <td><input name="name" id="name" size="25" value="<?php echo_html($this->viewdata['worker']->name) ?>" /></td>
     </tr>
     <tr>
         <th><label for="password">Password:</label></th>
-        <td><input name="password" id="password" type="password" size="25" value="<?php echo_html($this->viewdata['form']['password']) ?>" /></td>
+        <td><input name="password" id="password" size="25" value="<?php echo_html($this->viewdata['worker']->password) ?>" /></td>
     </tr>
     <tr class="submit">
         <td>&nbsp;</td>
-        <td><input type="submit" value="Create worker" /></td>
+        <td><input type="submit" value="<?php echo $this->getSubmitValue() ?>" /></td>
     </tr>
 </table>
 </form>
