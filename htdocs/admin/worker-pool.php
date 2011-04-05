@@ -7,9 +7,9 @@ require_once(dirname(__FILE__) . '/../views/admin/worker-pool.view.php');
 
 class AdminWorkerPoolController extends AdminController
 {
-    public function indexGetView()
+    public function indexGetView($request)
     {
-        $id = (int)$_GET['id'];
+        $id = (int)$request['id'];
 
         if ($id == 0) {
             return new RedirectView('/admin/workers.php');
@@ -59,16 +59,16 @@ class AdminWorkerPoolController extends AdminController
         return new AdminWorkerPoolView($viewdata);
     }
 
-    public function setEnabledPostView()
+    public function setEnabledPostView($request)
     {
-        $id = (int)$_POST['id'];
+        $id = (int)$request['id'];
 
         if ($id == 0) {
             return new RedirectView('/admin/workers.php');
         }
 
-        $enabled = (int)$_POST['enabled'];
-        $pool = (int)$_POST['pool-id'];
+        $enabled = (int)$request['enabled'];
+        $pool = (int)$request['pool-id'];
 
         $pdo = db_connect();
 
@@ -95,10 +95,8 @@ class AdminWorkerPoolController extends AdminController
         return new RedirectView("/admin/worker-pool.php?id=$id");
     }
 
-    public function editGetView()
+    public function editGetView(WorkerPoolModel $model)
     {
-        $model = new WorkerPoolModel($_GET);
-
         if ($model->worker_id == 0) {
             return new RedirectView('/admin/workers.php');
         }
@@ -112,10 +110,8 @@ class AdminWorkerPoolController extends AdminController
         return new WorkerPoolEditView(array('worker-pool' => $model));
     }
 
-    public function editPostView()
+    public function editPostView(WorkerPoolModel $model)
     {
-        $model = new WorkerPoolModel($_POST);
-
         if ($model->worker_id == 0) {
             return new RedirectView('/admin/workers.php');
         }
@@ -139,6 +135,35 @@ class AdminWorkerPoolController extends AdminController
         }
 
         return new RedirectView("/admin/worker-pool.php?id={$model->worker_id}");
+    }
+
+    public function deleteDefaultView(WorkerPoolModel $model)
+    {
+        if ($model->pool_id != 0 && $model->worker_id != 0) {
+            $pdo = db_connect();
+
+            $q = $pdo->prepare('
+                DELETE FROM worker_pool
+
+                WHERE worker_id = :worker_id
+                  AND pool_id = :pool_id
+            ');
+
+            $q->execute(array(
+                ':worker_id'    => $model->worker_id,
+                ':pool_id'      => $model->pool_id
+            ));
+
+            if (!$q->rowCount()) {
+                $_SESSION['tempdata']['errors'][] = 'Unable to delete worker pool assignment.';
+            }
+        }
+
+        if ($model->worker_id != 0) {
+            return new RedirectView("/admin/worker-pool.php?id={$model->worker_id}");
+        }
+
+        return new RedirectView('/admin/workers.php');
     }
 }
 

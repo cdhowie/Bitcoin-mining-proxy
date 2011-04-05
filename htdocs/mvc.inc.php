@@ -101,11 +101,41 @@ abstract class Controller
 
         $class = new ReflectionClass($this);
         foreach ($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+            $argCount = $method->getNumberOfRequiredParameters();
+
+            if ($argCount > 1)
+                continue;
+
             $name = $method->name;
 
-            if (    strcasecmp($specificAction, $name) == 0 ||
-                    strcasecmp($genericAction,  $name) == 0) {
-                return $this->$name();
+            if (strcasecmp($specificAction, $name) == 0) {
+                if ($argCount == 1) {
+                    $request = $_SERVER['REQUEST_METHOD'] == 'GET' ? $_GET : $_POST;
+
+                    $args = $method->getParameters();
+                    $argClass = $args[0]->getClass();
+                    if ($argClass) {
+                        $request = $argClass->newInstance($request);
+                    }
+
+                    return $method->invoke($this, $request);
+                } else {
+                    return $method->invoke($this);
+                }
+            } elseif (strcasecmp($genericAction, $name) == 0) {
+                if ($argCount == 1) {
+                    $request = array_merge($_GET, $_POST);
+
+                    $args = $method->getParameters();
+                    $argClass = $args[0]->getClass();
+                    if ($argClass) {
+                        $request = $argClass->newInstance($request);
+                    }
+
+                    return $method->invoke($this, $request);
+                } else {
+                    return $method->invoke($this);
+                }
             }
         }
 

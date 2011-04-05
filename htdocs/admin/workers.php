@@ -38,10 +38,8 @@ class AdminWorkersController extends AdminController
         return new AdminWorkerNewEditView(array('worker' => new WorkerModel()));
     }
 
-    public function newPostView()
+    public function newPostView(WorkerModel $worker)
     {
-        $worker = new WorkerModel($_POST);
-
         $result = $worker->validate();
         $valid = $result === TRUE;
 
@@ -101,9 +99,9 @@ class AdminWorkersController extends AdminController
         return new RedirectView('/admin/workers.php');
     }
 
-    public function deletePostView()
+    public function deletePostView($request)
     {
-        $id = (int)$_POST['id'];
+        $id = (int)$request['id'];
 
         if ($id == 0) {
             $_SESSION['tempdata']['errors'][] = 'Invalid worker ID.';
@@ -157,9 +155,9 @@ class AdminWorkersController extends AdminController
         return new RedirectView('/admin/workers.php');
     }
 
-    public function editGetView()
+    public function editGetView($request)
     {
-        $id = (int)$_GET['id'];
+        $id = (int)$request['id'];
 
         if ($id == 0) {
             return new RedirectView('/admin/workers.php');
