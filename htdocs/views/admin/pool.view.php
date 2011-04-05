@@ -36,7 +36,7 @@ class AdminPoolsView
     <?php foreach ($this->viewdata['pools'] as $pool) { ?>
     <tr <?php if (!$pool->enabled) { ?>class="disabled"<?php } ?>>
         <td><?php echo_html($pool->name) ?></td>
-        <td>
+        <td class="enabled-column">
             <?php
                 $indicator = $pool->enabled ? 'flag_green.png' : 'flag_red.png';
             ?>

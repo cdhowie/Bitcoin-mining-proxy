@@ -54,7 +54,7 @@ class AdminWorkerPoolView
         <td colspan="5">&nbsp;</td>
         <?php } else { ?>
         <td><?php echo_html($row['priority']) ?></td>
-        <td>
+        <td class="enabled-column">
             <?php
                 $indicator = $row['enabled'] ? 'flag_green.png' : 'flag_red.png';
                 $newstatus = $row['enabled'] ? 0 : 1;
@@ -69,7 +69,7 @@ class AdminWorkerPoolView
                 </fieldset>
             </form>
         </td>
-        <td>
+        <td class="enabled-column">
             <?php
                 $indicator = $row['pool-enabled'] ? 'flag_green.png' : 'flag_red.png';
             ?>

@@ -155,6 +155,10 @@ table.data tr.disabled:hover {
     background-image: url('icons/cog.png');
 }
 
+.enabled-column {
+    text-align: center;
+}
+
 a:link, a:active, a:visited, a:hover {
     color: inherit;
 }
