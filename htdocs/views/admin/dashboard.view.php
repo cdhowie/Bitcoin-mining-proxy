@@ -68,7 +68,16 @@ class AdminDashboardView
     </tr>
     <?php foreach ($this->viewdata['worker-status'] as $row) { ?>
     <tr>
-        <td><?php echo htmlspecialchars($row['worker']) ?></td>
+        <td>
+            <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>">
+                <fieldset>
+                    <input type="hidden" name="id" value="<?php echo_html($row['worker_id']) ?>" />
+                    <input type="image" title="Manage pools" alt="Manage pools"
+                        src="<?php echo_html(make_url('/assets/icons/server_go.png')) ?>" />
+                </fieldset>
+            </form>
+            <?php echo htmlspecialchars($row['worker']) ?>
+        </td>
         <td>At <?php echo_html($row['active_time']) ?> from <?php echo_html($row['active_pool']) ?></td>
         <td><?php
             $value = $row['last_accepted_submission'];

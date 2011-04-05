@@ -56,6 +56,7 @@ class AdminDashboardController extends AdminController
         $viewdata['worker-status'] = db_query($pdo, '
             SELECT DISTINCT
                 w.name AS worker,
+                w.id AS worker_id,
                 p.name AS active_pool,
                 sub.active_time AS active_time,
                 swp.name AS last_accepted_pool,

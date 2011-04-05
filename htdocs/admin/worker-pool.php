@@ -2,6 +2,7 @@
 
 require_once(dirname(__FILE__) . '/../common.inc.php');
 require_once(dirname(__FILE__) . '/../admin/controller.inc.php');
+require_once(dirname(__FILE__) . '/../models/worker-pool.inc.php');
 require_once(dirname(__FILE__) . '/../views/admin/worker-pool.view.php');
 
 class AdminWorkerPoolController extends AdminController
@@ -37,21 +38,20 @@ class AdminWorkerPoolController extends AdminController
 
         $viewdata['worker-pools'] = db_query($pdo, '
             SELECT
-                wp.pool_id AS `pool-id`,
                 wp.pool_username AS username,
                 wp.pool_password AS password,
                 wp.priority AS priority,
                 wp.enabled AS enabled,
 
+                p.id AS `pool-id`,
                 p.name AS pool,
                 p.enabled AS `pool-enabled`
 
-            FROM worker_pool wp
+            FROM pool p
 
-            LEFT OUTER JOIN pool p
-            ON p.id = wp.pool_id
-
-            WHERE wp.worker_id = :worker_id
+            LEFT OUTER JOIN worker_pool wp
+                ON p.id = wp.pool_id
+               AND wp.worker_id = :worker_id
 
             ORDER BY priority DESC 
         ', array(':worker_id' => $id));
@@ -93,6 +93,52 @@ class AdminWorkerPoolController extends AdminController
         }
 
         return new RedirectView("/admin/worker-pool.php?id=$id");
+    }
+
+    public function editGetView()
+    {
+        $model = new WorkerPoolModel($_GET);
+
+        if ($model->worker_id == 0) {
+            return new RedirectView('/admin/workers.php');
+        }
+
+        if ($model->pool_id == 0) {
+            return new RedirectView("/admin/worker-pool.php?id={$model->worker_id}");
+        }
+
+        $model->refresh();
+
+        return new WorkerPoolEditView(array('worker-pool' => $model));
+    }
+
+    public function editPostView()
+    {
+        $model = new WorkerPoolModel($_POST);
+
+        if ($model->worker_id == 0) {
+            return new RedirectView('/admin/workers.php');
+        }
+
+        if ($model->pool_id == 0) {
+            return new RedirectView("/admin/worker-pool.php?id={$model->worker_id}");
+        }
+
+        $errors = $model->validate();
+        if ($errors !== TRUE) {
+            $_SESSION['tempdata']['errors'] = array_merge(
+                (array)$_SESSION['tempdata']['errors'], $errors);
+
+            return new WorkerPoolEditView(array('worker-pool' => $model));
+        }
+
+        if (!$model->save()) {
+            $_SESSION['tempdata']['errors'][] = 'Unable to save worker pool data.';
+
+            return new WorkerPoolEditView(array('worker-pool' => $model));
+        }
+
+        return new RedirectView("/admin/worker-pool.php?id={$model->worker_id}");
     }
 }
 
