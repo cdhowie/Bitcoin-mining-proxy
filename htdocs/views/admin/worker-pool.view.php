@@ -6,6 +6,11 @@ class AdminWorkerPoolView
     extends MasterView
     implements IJsonView
 {
+    protected function getTitle()
+    {
+        return "Worker pool management - " . $this->viewdata['worker-name'];
+    }
+
     protected function renderBody()
     {
 ?>

@@ -6,6 +6,11 @@ class AdminDashboardView
     extends MasterView
     implements IJsonView
 {
+    protected function getTitle()
+    {
+        return "Dashboard";
+    }
+
     private function renderWorkTable($rows)
     {
 ?>

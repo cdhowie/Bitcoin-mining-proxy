@@ -8,9 +8,7 @@ class AdminDashboardController extends AdminController
 {
     public function indexDefaultView()
     {
-        $viewdata = array(
-          'title'     => 'bitcoin-mining-proxy dashboard'
-        );
+        $viewdata = array();
 
         $pdo = db_connect();
 

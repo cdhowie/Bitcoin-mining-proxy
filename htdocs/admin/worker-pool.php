@@ -31,7 +31,6 @@ class AdminWorkerPoolController extends AdminController
         $name = $name[0]['name'];
 
         $viewdata = array(
-            'title'         => "Worker pool management - $name",
             'worker-id'     => $id,
             'worker-name'   => $name
         );

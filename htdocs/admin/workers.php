@@ -8,9 +8,7 @@ class AdminWorkersController extends AdminController
 {
     public function indexDefaultView()
     {
-        $viewdata = array(
-            'title'     => 'bitcoin-mining-proxy worker management'
-        );
+        $viewdata = array();
 
         $pdo = db_connect();
 
@@ -36,13 +34,12 @@ class AdminWorkersController extends AdminController
 
     public function newGetView()
     {
-        return new AdminWorkersNewView(array('title' => 'New worker'));
+        return new AdminWorkersNewView(array());
     }
 
     public function newPostView()
     {
         $viewdata = array(
-            'title' => 'New worker',
             'form'  => $_POST
         );
 

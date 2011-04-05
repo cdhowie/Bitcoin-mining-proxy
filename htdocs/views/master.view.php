@@ -8,6 +8,11 @@ abstract class MasterView
 {
     protected abstract function renderBody();
 
+    protected function getTitle()
+    {
+        die('No page title set.');
+    }
+
     public function renderHtmlHeaders()
     {
     }
@@ -33,16 +38,22 @@ abstract class MasterView
     public function renderHtml()
     {
         echo '<?xml version="1.0" encoding="UTF-8" ?>';
+
+        if (!isset($this->viewdata['title'])) {
+            $title = $this->getTitle();
+        } else {
+            $title = $this->viewdata['title'];
+        }
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
     <head>
-        <title><?php echo htmlspecialchars($this->viewdata['title']) ?></title>
+        <title><?php echo_html($title) ?></title>
         <link rel="stylesheet" type="text/css" href="<?php echo_html(make_url('/assets/style.css')) ?>" />
     </head>
     <body>
-        <h1><?php echo htmlspecialchars($this->viewdata['title']) ?></h1>
+        <h1><?php echo_html($title) ?></h1>
 
         <ul id="navmenu">
             <li><a href="<?php echo_html(make_url('/admin/')) ?>"><img src="<?php echo_html(make_url('/assets/icons/report.png')) ?>" /> Dashboard</a></li>

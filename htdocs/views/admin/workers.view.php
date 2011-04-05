@@ -6,6 +6,11 @@ class AdminWorkersView
     extends MasterView
     implements IJsonView
 {
+    protected function getTitle()
+    {
+        return "Worker management";
+    }
+
     protected function renderBody()
     {
 ?>
@@ -64,6 +69,11 @@ class AdminWorkersView
 class AdminWorkersNewView
     extends MasterView
 {
+    protected function getTitle()
+    {
+        return "New worker";
+    }
+
     protected function renderBody()
     {
 ?>
