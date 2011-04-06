@@ -81,16 +81,19 @@ class AdminDashboardView
             </form>
             <?php echo htmlspecialchars($row['worker']) ?>
         </td>
-        <td>At <?php echo_html($row['active_time']) ?> from <?php echo_html($row['active_pool']) ?></td>
         <td><?php
-            $value = $row['last_accepted_submission'];
-            if (!$value) {
-                $value = 'Never';
+            if (isset($row['active_pool'])) {
+                echo_html("At {$row['active_time']} from {$row['active_pool']}");
+            } else {
+                echo "Never";
             }
-
-            $value = "At $value to " . $row['last_accepted_pool'];
-
-            echo_html($value);
+        ?></td>
+        <td><?php
+            if (isset($row['last_accepted_pool'])) {
+                echo_html("At {$row['last_accepted_time']} to {$row['last_accepted_pool']}");
+            } else {
+                echo "Never";
+            }
         ?></td>
     </tr>
     <?php } ?>

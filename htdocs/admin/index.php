@@ -54,55 +54,50 @@ class AdminDashboardController extends AdminController
         ');
 
         $viewdata['worker-status'] = db_query($pdo, '
-            SELECT DISTINCT
+            SELECT
                 w.name AS worker,
                 w.id AS worker_id,
-                p.name AS active_pool,
-                sub.active_time AS active_time,
-                swp.name AS last_accepted_pool,
-                sw.submission_time AS last_accepted_submission
 
-            FROM
-                work_data wd,
-                pool p,
-                worker w,
-                (
-                    SELECT
-                        worker_id,
-                        MAX(time_requested) AS active_time
+                worked.pool_name AS active_pool,
+                worked.latest AS active_time,
 
-                    FROM work_data
+                submitted.pool_name AS last_accepted_pool,
+                submitted.latest AS last_accepted_time
 
-                    GROUP BY worker_id
-                ) sub
+            FROM worker w
 
             LEFT OUTER JOIN (
                 SELECT
-                    worker_id,
-                    MAX(time) AS submission_time
+                    wd.worker_id AS worker_id,
+                    MAX(wd.time_requested) AS latest,
+                    p.name AS pool_name
 
-                FROM submitted_work
+                FROM work_data wd, pool p
 
-                WHERE result = 1
+                WHERE wd.pool_id = p.id
 
-                GROUP BY worker_id
-            ) sw
-                ON sw.worker_id = sub.worker_id
+                GROUP BY wd.worker_id
+            ) worked
 
-            LEFT OUTER JOIN submitted_work swd
-               ON swd.worker_id = sw.worker_id
-              AND swd.time = sw.submission_time
+            ON worked.worker_id = w.id
 
-            LEFT OUTER JOIN pool swp
-               ON swd.pool_id = swp.id
+            LEFT OUTER JOIN (
+                SELECT
+                    sw.worker_id AS worker_id,
+                    MAX(sw.time) AS latest,
+                    p.name AS pool_name
 
-            WHERE wd.time_requested = sub.active_time
-              AND wd.worker_id = sub.worker_id
-              AND p.id = wd.pool_id
+                FROM submitted_work sw, pool p
 
-              AND w.id = sub.worker_id
+                WHERE sw.pool_id = p.id
+                  AND result = 1
 
-            ORDER BY worker
+                GROUP BY sw.worker_id
+            ) submitted
+
+            ON submitted.worker_id = w.id
+
+            ORDER BY w.name
         ');
 
         return new AdminDashboardView($viewdata);
