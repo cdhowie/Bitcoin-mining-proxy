@@ -68,46 +68,58 @@ class AdminDashboardController extends AdminController
 
             LEFT OUTER JOIN (
                 SELECT
-                    t.worker_id AS worker_id,
-                    t.time_requested AS latest,
+                    wd.worker_id AS worker_id,
+                    wd.time_requested AS latest,
                     p.name AS pool_name
 
-                FROM (
-                    SELECT worker_id, pool_id, time_requested
+                FROM work_data wd
+
+                INNER JOIN (
+                    SELECT
+                        worker_id,
+                        MAX(time_requested) AS latest
 
                     FROM work_data
 
-                    ORDER BY time_requested DESC
-                ) t
+                    GROUP BY worker_id
+                ) wd2
+                    ON wd.worker_id = wd2.worker_id
+                   AND wd.time_requested = wd2.latest
 
                 INNER JOIN pool p
-                    ON p.id = t.pool_id
+                    ON p.id = wd.pool_id
 
-                GROUP BY worker_id
+                GROUP BY wd.worker_id
             ) worked
 
             ON worked.worker_id = w.id
 
             LEFT OUTER JOIN (
                 SELECT
-                    t.worker_id AS worker_id,
-                    t.time AS latest,
+                    sw.worker_id AS worker_id,
+                    sw.time AS latest,
                     p.name AS pool_name
 
-                FROM (
-                    SELECT worker_id, pool_id, time
+                FROM submitted_work sw
+
+                INNER JOIN (
+                    SELECT
+                        worker_id,
+                        MAX(time) AS latest
 
                     FROM submitted_work
 
                     WHERE result = 1
 
-                    ORDER BY id DESC
-                ) t
+                    GROUP BY worker_id
+                ) sw2
+                    ON sw.worker_id = sw2.worker_id
+                   AND sw.time = sw2.latest
 
                 INNER JOIN pool p
-                    ON p.id = t.pool_id
+                    ON p.id = sw.pool_id
 
-                GROUP BY worker_id
+                GROUP BY sw.worker_id
             ) submitted
 
             ON submitted.worker_id = w.id
