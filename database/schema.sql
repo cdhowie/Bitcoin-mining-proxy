@@ -45,7 +45,8 @@ CREATE TABLE `submitted_work` (
   `result` tinyint(1) NOT NULL,
   `time` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `worker_id` (`worker_id`)
+  KEY `dashboard_status_index` (`worker_id`,`result`,`time`),
+  KEY `worker_id` (`worker_id`,`time`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -61,7 +62,8 @@ CREATE TABLE `work_data` (
   `pool_id` int(11) NOT NULL,
   `data` char(152) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `time_requested` datetime NOT NULL,
-  PRIMARY KEY (`worker_id`,`data`)
+  PRIMARY KEY (`worker_id`,`data`),
+  KEY `worker_time` (`worker_id`,`time_requested`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -108,4 +110,4 @@ CREATE TABLE `worker_pool` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2011-04-03  2:54:14
+-- Dump completed on 2011-04-06 18:05:08
