@@ -26,6 +26,21 @@ abstract class MasterView
 
     public function renderHtmlHeaders()
     {
+        if (isset($_SERVER['HTTP_ACCEPT'])) {
+            $types = explode(',', $_SERVER['HTTP_ACCEPT']);
+
+            foreach ($types as $type) {
+                $parts = explode(';', $type);
+                if ($parts[0] == 'application/xhtml+xml') {
+                    header('Content-Type: application/xhtml+xml');
+                    return;
+                }
+            }
+
+            header('Content-Type: text/html');
+            return;
+        }
+
         header('Content-Type: application/xhtml+xml');
     }
 
