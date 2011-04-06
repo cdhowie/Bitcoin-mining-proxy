@@ -35,18 +35,14 @@ class AdminWorkerPoolView
                     <input type="hidden" name="worker_id" value="<?php echo_html($this->viewdata['worker-id']) ?>" />
                     <input type="hidden" name="pool_id" value="<?php echo_html($row['pool-id']) ?>" />
 
-                    <?php if (isset($row['username'])) { ?>
-                    <input type="image" title="Edit pool assignment" alt="Edit pool assignment"
-                        name="action" value="edit"
-                        src="<?php echo_html(make_url('/assets/icons/server_edit.png')) ?>" />
-                    <input type="image" title="Delete pool assignment" alt="Delete pool assignment"
-                        name="action" value="delete"
-                        src="<?php echo_html(make_url('/assets/icons/server_delete.png')) ?>" />
-                    <?php } else { ?>
-                    <input type="image" title="Create pool assignment" alt="Create pool assignment"
-                        name="action" value="edit"
-                        src="<?php echo_html(make_url('/assets/icons/server_add.png')) ?>" />
-                    <?php } ?>
+                    <?php
+                        if (isset($row['username'])) {
+                            $this->renderImageButton('edit', 'edit-pool-assignment', 'Edit pool assignment');
+                            $this->renderImageButton('delete', 'delete-pool-assignment', 'Delete pool assignment');
+                        } else {
+                            $this->renderImageButton('edit', 'create-pool-assignment', 'Create pool assignment');
+                        }
+                    ?>
                 </fieldset>
             </form>
             <?php echo_html($row['pool']) ?></td>
@@ -56,16 +52,20 @@ class AdminWorkerPoolView
         <td><?php echo_html($row['priority']) ?></td>
         <td class="enabled-column">
             <?php
-                $indicator = $row['enabled'] ? 'flag_green.png' : 'flag_red.png';
                 $newstatus = $row['enabled'] ? 0 : 1;
             ?>
             <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>" method="post">
                 <fieldset>
                     <input type="hidden" name="id" value="<?php echo_html($this->viewdata['worker-id']) ?>" />
                     <input type="hidden" name="pool-id" value="<?php echo_html($row['pool-id']) ?>" />
-                    <input type="hidden" name="action" value="setEnabled" />
                     <input type="hidden" name="enabled" value="<?php echo_html($newstatus) ?>" />
-                    <input type="image" title="Toggle" alt="<?php echo_html($row['enabled'] ? 'Yes' : 'No') ?>" src="<?php echo_html(make_url("/assets/icons/$indicator")) ?>" />
+                    <?php
+                        if ($row['enabled']) {
+                            $this->renderImageButton('setEnabled', 'enabled', 'Yes', 'Toggle');
+                        } else {
+                            $this->renderImageButton('setEnabled', 'disabled', 'No', 'Toggle');
+                        }
+                    ?>
                 </fieldset>
             </form>
         </td>

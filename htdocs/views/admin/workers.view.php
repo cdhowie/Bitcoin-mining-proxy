@@ -40,16 +40,13 @@ class AdminWorkersView
             <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>">
                 <fieldset>
                     <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                    <input type="image" title="Manage pools" alt="Manage pools"
-                        src="<?php echo_html(make_url('/assets/icons/server_go.png')) ?>" />
+                    <?php $this->renderImageButton('index', 'manage-pools', 'Manage pools') ?>
                 </fieldset>
             </form>
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="get">
                 <fieldset>
                     <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                    <input type="hidden" name="action" value="edit" />
-                    <input type="image" title="Edit worker" alt="Edit worker"
-                        src="<?php echo_html(make_url('/assets/icons/cog_edit.png')) ?>" />
+                    <?php $this->renderImageButton('edit', 'edit-worker', 'Edit worker') ?>
                 </fieldset>
             </form>
         <?php
@@ -57,10 +54,8 @@ class AdminWorkersView
 ?>
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>" method="post">
                 <fieldset>
-                    <input type="hidden" name="action" value="delete" />
                     <input type="hidden" name="id" value="<?php echo_html($row['id']) ?>" />
-                    <input type="image" title="Delete worker" alt="Delete worker"
-                        src="<?php echo_html(make_url('/assets/icons/cog_delete.png')) ?>" />
+                    <?php $this->renderImageButton('delete', 'delete-worker', 'Delete worker') ?>
                 </fieldset>
             </form>
 <?php
@@ -73,9 +68,7 @@ class AdminWorkersView
         <td>
             <form action="<?php echo_html(make_url('/admin/workers.php')) ?>">
                 <fieldset>
-                    <input type="hidden" name="action" value="new" />
-                    <input type="image" title="New worker" alt="New worker"
-                        src="<?php echo_html(make_url('/assets/icons/cog_add.png')) ?>" />
+                    <?php $this->renderImageButton('new', 'new-worker', 'New worker') ?>
                 </fieldset>
             </form>
         </td>

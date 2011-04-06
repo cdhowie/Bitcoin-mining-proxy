@@ -76,8 +76,7 @@ class AdminDashboardView
             <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>">
                 <fieldset>
                     <input type="hidden" name="id" value="<?php echo_html($row['worker_id']) ?>" />
-                    <input type="image" title="Manage pools" alt="Manage pools"
-                        src="<?php echo_html(make_url('/assets/icons/server_go.png')) ?>" />
+                    <?php $this->renderImageButton('index', 'manage-pools', 'Manage pools') ?>
                 </fieldset>
             </form>
             <?php echo htmlspecialchars($row['worker']) ?>

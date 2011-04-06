@@ -37,14 +37,16 @@ class AdminPoolsView
     <tr <?php if (!$pool->enabled) { ?>class="disabled"<?php } ?>>
         <td><?php echo_html($pool->name) ?></td>
         <td class="enabled-column">
-            <?php
-                $indicator = $pool->enabled ? 'flag_green.png' : 'flag_red.png';
-            ?>
             <form action="<?php echo_html(make_url('/admin/pool.php')) ?>" method="post">
                 <fieldset>
                     <input type="hidden" name="id" value="<?php echo_html($pool->id) ?>" />
-                    <input type="hidden" name="action" value="toggleEnabled" />
-                    <input type="image" title="Toggle" alt="<?php echo_html($pool->enabled ? 'Yes' : 'No') ?>" src="<?php echo_html(make_url("/assets/icons/$indicator")) ?>" />
+                    <?php
+                        if ($pool->enabled) {
+                            $this->renderImageButton('toggleEnabled', 'enabled', 'Yes', 'Toggle');
+                        } else {
+                            $this->renderImageButton('toggleEnabled', 'disabled', 'No', 'Toggle');
+                        }
+                    ?>
                 </fieldset>
             </form>
         </td>
@@ -53,14 +55,12 @@ class AdminPoolsView
             <form action="<?php echo_html(make_url('/admin/pool.php')) ?>" method="get">
                 <fieldset>
                     <input type="hidden" name="id" value="<?php echo_html($pool->id) ?>" />
-                    <input type="image" title="Edit pool" alt="Edit pool"
-                        name="action" value="edit"
-                        src="<?php echo_html(make_url("/assets/icons/server_edit.png")) ?>" />
-                    <?php if (!$pool->worker_count) { ?>
-                    <input type="image" title="Delete pool" alt="Delete pool"
-                        name="action" value="delete"
-                        src="<?php echo_html(make_url("/assets/icons/server_delete.png")) ?>" />
-                    <?php } ?>
+                    <?php
+                        $this->renderImageButton('edit', 'edit-pool', 'Edit pool');
+                        if (!$pool->worker_count) {
+                            $this->renderImageButton('delete', 'delete-pool', 'Delete pool');
+                        }
+                    ?>
                 </fieldset>
             </form>
         </td>
@@ -71,9 +71,7 @@ class AdminPoolsView
         <td>
             <form action="<?php echo_html(make_url('/admin/pool.php')) ?>">
                 <fieldset>
-                    <input type="hidden" name="action" value="new" />
-                    <input type="image" title="New pool" alt="New pool"
-                        src="<?php echo_html(make_url('/assets/icons/server_add.png')) ?>" />
+                    <?php $this->renderImageButton('new', 'new-pool', 'New pool') ?>
                 </fieldset>
             </form>
         </td>

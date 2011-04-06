@@ -44,6 +44,15 @@ abstract class MasterView
         header('Content-Type: application/xhtml+xml');
     }
 
+    protected function renderImageButton($action, $cssClass, $text, $title = FALSE)
+    {
+        if ($title === FALSE) {
+            $title = $text;
+        }
+
+        ?><button name="action" value="<?php echo_html($action) ?>" title="<?php echo_html($title) ?>" class="image-button image-button-<?php echo_html($cssClass) ?>"><span><?php echo_html($text) ?></span></button> <?php
+    }
+
     protected function displayNoticeList($key)
     {
         $notices = get_tempdata($key);

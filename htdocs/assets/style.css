@@ -245,3 +245,73 @@ fieldset {
 .info ul {
     color: #4f4;
 }
+
+.image-button {
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    width: 16px;
+    height: 16px;
+
+    background-color: transparent;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    vertical-align: top;
+
+    cursor: pointer;
+}
+
+.image-button span {
+    display: none;
+}
+
+.image-button-edit-pool-assignment {
+    background-image: url('icons/server_edit.png');
+}
+
+.image-button-delete-pool-assignment {
+    background-image: url('icons/server_delete.png');
+}
+
+.image-button-create-pool-assignment {
+    background-image: url('icons/server_add.png');
+}
+
+.image-button-disabled {
+    background-image: url('icons/flag_red.png');
+}
+
+.image-button-enabled {
+    background-image: url('icons/flag_green.png');
+}
+
+.image-button-manage-pools {
+    background-image: url('icons/server_go.png');
+}
+
+.image-button-edit-pool {
+    background-image: url('icons/server_edit.png');
+}
+
+.image-button-delete-pool {
+    background-image: url('icons/server_delete.png');
+}
+
+.image-button-new-pool {
+    background-image: url('icons/server_add.png');
+}
+
+.image-button-edit-worker {
+    background-image: url('icons/cog_edit.png');
+}
+
+.image-button-delete-worker {
+    background-image: url('icons/cog_delete.png');
+}
+
+.image-button-new-worker {
+    background-image: url('icons/cog_add.png');
+}
+
