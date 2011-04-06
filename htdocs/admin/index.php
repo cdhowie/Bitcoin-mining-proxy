@@ -68,31 +68,46 @@ class AdminDashboardController extends AdminController
 
             LEFT OUTER JOIN (
                 SELECT
-                    wd.worker_id AS worker_id,
-                    MAX(wd.time_requested) AS latest,
+                    t.worker_id AS worker_id,
+                    t.time_requested AS latest,
                     p.name AS pool_name
 
-                FROM work_data wd, pool p
+                FROM (
+                    SELECT worker_id, pool_id, time_requested
 
-                WHERE wd.pool_id = p.id
+                    FROM work_data
 
-                GROUP BY wd.worker_id
+                    ORDER BY time_requested DESC
+                ) t
+
+                INNER JOIN pool p
+                    ON p.id = t.pool_id
+
+                GROUP BY worker_id
             ) worked
 
             ON worked.worker_id = w.id
 
             LEFT OUTER JOIN (
                 SELECT
-                    sw.worker_id AS worker_id,
-                    MAX(sw.time) AS latest,
+                    t.worker_id AS worker_id,
+                    t.time AS latest,
                     p.name AS pool_name
 
-                FROM submitted_work sw, pool p
+                FROM (
+                    SELECT worker_id, pool_id, time
 
-                WHERE sw.pool_id = p.id
-                  AND result = 1
+                    FROM submitted_work
 
-                GROUP BY sw.worker_id
+                    WHERE result = 1
+
+                    ORDER BY id DESC
+                ) t
+
+                INNER JOIN pool p
+                    ON p.id = t.pool_id
+
+                GROUP BY worker_id
             ) submitted
 
             ON submitted.worker_id = w.id
