@@ -79,6 +79,41 @@ class AdminPoolController extends AdminController
 
         return new RedirectView('/admin/pool.php');
     }
+
+    public function deleteDefaultView(PoolModel $pool)
+    {
+        if ($pool->id) {
+            $pdo = db_connect();
+
+            $q = $pdo->prepare('
+                DELETE p
+                FROM pool p
+
+                LEFT OUTER JOIN (
+                    SELECT
+                        wp.pool_id AS pool_id,
+                        COUNT(wp.worker_id) AS workers
+
+                    FROM worker_pool wp
+
+                    GROUP BY wp.pool_id
+                ) wp
+
+                ON wp.pool_id = :pool_id
+
+                WHERE p.id = :pool_id
+                  AND (wp.workers = 0 OR wp.workers IS NULL)
+            ');
+
+            $q->execute(array(':pool_id' => $pool->id));
+
+            if (!$q->rowCount()) {
+                $_SESSION['tempdata']['errors'][] = 'Pool still has workers; cannot delete.';
+            }
+        }
+
+        return new RedirectView('/admin/pool.php');
+    }
 }
 
 MvcEngine::run(new AdminPoolController());
