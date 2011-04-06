@@ -1,5 +1,5 @@
 html {
-    overflow: -moz-scrollbars-vertical;
+    overflow-y: scroll;
     margin: 0;
     padding: 0;
 }
@@ -17,6 +17,9 @@ h1 {
     font-size: 240%;
 
     text-align: center;
+
+    margin-top: 0.5em;
+    margin-bottom: 0;
 }
 
 table.data {
@@ -92,7 +95,7 @@ table.data tr.disabled:hover {
 
 #navmenu {
     list-style: none;
-    margin: 0.75em 0;
+    margin: 1.5em 0;
     padding: 0;
     text-align: center;
 }
@@ -216,4 +219,29 @@ fieldset {
     padding: 0;
     margin: 0;
     display: inline;
+}
+
+.errors,
+.info {
+    margin: 1em auto;
+
+    display: table;
+}
+
+.errors ul,
+.info ul {
+    padding: 0;
+    padding-left: 1.5em;
+
+    display: table-cell;
+
+    font-weight: bold;
+}
+
+.errors ul {
+    color: #f44;
+}
+
+.info ul {
+    color: #4f4;
 }

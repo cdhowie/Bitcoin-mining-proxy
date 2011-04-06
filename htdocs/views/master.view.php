@@ -38,11 +38,13 @@ abstract class MasterView
         }
 
 ?>
-    <ul class="<?php echo_html($key) ?>">
+    <div class="<?php echo_html($key) ?>">
+    <ul>
     <?php foreach ($notices as $notice) { ?>
         <li><?php echo_html($notice) ?></li>
     <?php } ?>
     </ul>
+    </div>
 <?php
 
     }
