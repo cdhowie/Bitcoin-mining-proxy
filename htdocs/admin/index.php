@@ -114,6 +114,7 @@ class AdminDashboardController extends AdminController
                     GROUP BY worker_id
                 ) sw2
                     ON sw.worker_id = sw2.worker_id
+                   AND sw.result = 1
                    AND sw.time = sw2.latest
 
                 INNER JOIN pool p
