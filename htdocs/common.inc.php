@@ -65,23 +65,35 @@ function json_response($object) {
     exit;
 }
 
-function place_json_call($object, $url, $username = '', $password = '') {
+function place_json_call($object, $url, $username = '', $password = '', &$headers) {
     $authHeader = "";
 
     if (strlen($username) != 0) {
         $authHeader = "Authorization: Basic " . base64_encode($username . ':' . $password) . "\r\n";
     }
 
-    $context = stream_context_create(array(
-        'http'  => array(
+    if (isset($object)) {
+        $context_options = array(
             'method'    => 'POST',
             'header'    => "Content-Type: application/json-rpc\r\n$authHeader",
             'content'   => json_encode($object),
             'timeout'   => 5
-        )
-    ));
+        );
+    } else {
+        $context_options = array(
+            'method'    => 'GET',
+            'header'    => $authHeader,
+            'timeout'   => 86400
+        );
+    }
 
-    return @json_decode(@file_get_contents($url, false, $context));
+    $context = stream_context_create(array('http' => $context_options));
+
+    $result = @json_decode(@file_get_contents($url, false, $context));
+
+    $headers = $http_response_header;
+
+    return $result;
 }
 
 function echo_html($text) {

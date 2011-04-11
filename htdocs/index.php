@@ -31,10 +31,65 @@ if ($worker_id === FALSE) {
 $q->closeCursor();
 
 
+function process_work($pdo, $worker_id, $pool_id, $response) {
+    $q = $pdo->prepare('
+        INSERT INTO work_data
+
+        (worker_id, pool_id, data, time_requested)
+            VALUES
+        (:worker_id, :pool_id, :data, UTC_TIMESTAMP())
+    ');
+
+    $q->execute(array(
+        'worker_id' => $worker_id,
+        'pool_id'   => $pool_id,
+        'data'      => substr($response->result->data, 0, 152)));
+}
 
 # Check request
 
-if ($_SERVER['REQUEST_METHOD'] != 'POST') {
+$lpurl = $_GET['lpurl'];
+
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['lpurl']) && isset($_GET['pool'])) {
+    $lpurl = $_GET['lpurl'];
+    $pool = $_GET['pool'];
+
+    set_time_limit(0);
+
+    $q = $pdo->prepare('
+        SELECT
+            pool_username AS username,
+            pool_password AS password
+
+        FROM worker_pool
+
+        WHERE pool_id = :pool_id
+          AND worker_id = :worker_id
+    ');
+
+    $q->execute(array(
+        ':pool_id'      => $pool,
+        ':worker_id'    => $worker_id
+    ));
+
+    $row = $q->fetch(PDO::FETCH_ASSOC);
+
+    if ($row === FALSE) {
+        json_error('Unable to locate worker-pool association record.', 'json');
+    }
+
+    $q->closeCursor();
+
+    $response = place_json_call(null, $lpurl, $row['username'], $row['password'], $headers);
+
+    if (!is_object($response)) {
+        json_error('Invalid response from long-poll request.', 'json');
+    }
+
+    process_work($pdo, $worker_id, $pool, $response);
+
+    json_success($response->result, $response->id);
+} elseif ($_SERVER['REQUEST_METHOD'] != 'POST') {
     request_fail();
 }
 
@@ -86,7 +141,7 @@ if (is_array($params) && count($params) == 1) {
         json_error('Work not found in proxy database.', $json->id);
     }
 
-    $result = place_json_call($json, $row['url'], $row['username'], $row['password']);
+    $result = place_json_call($json, $row['url'], $row['username'], $row['password'], $headers);
 
     $q = $pdo->prepare('
         INSERT INTO submitted_work
@@ -136,21 +191,27 @@ $request->method = "getwork";
 $request->id = "json";
 
 foreach ($rows as $row) {
-    $response = place_json_call($request, $row['url'], $row['username'], $row['password']);
+    $response = place_json_call($request, $row['url'], $row['username'], $row['password'], $headers);
+
+    foreach ($headers as $header) {
+        $pieces = explode(': ', $header, 2);
+
+        if (count($pieces) == 2 && $pieces[0] == 'X-Long-Polling') {
+            $parts = parse_url($row['url']);
+
+            $lpurl = sprintf('%s://%s%s%s',
+                $parts['scheme'],
+                $parts['host'],
+                (isset($parts['port']) ? (':' . $parts['port']) : ''),
+                $pieces[1]);
+
+            header(sprintf('X-Long-Polling: %s?lpurl=%s&pool=%d',
+                $_SERVER['PHP_SELF'], urlencode($lpurl), $row['id']));
+        }
+    }
 
     if (is_object($response)) {
-        $q = $pdo->prepare('
-            INSERT INTO work_data
-
-            (worker_id, pool_id, data, time_requested)
-                VALUES
-            (:worker_id, :pool_id, :data, UTC_TIMESTAMP())
-        ');
-
-        $q->execute(array(
-            'worker_id' => $worker_id,
-            'pool_id'   => $row['id'],
-            'data'      => substr($response->result->data, 0, 152)));
+        process_work($pdo, $worker_id, $row['id'], $response);
 
         json_success($response->result, $response->id);
     }
