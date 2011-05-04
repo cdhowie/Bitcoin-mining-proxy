@@ -44,6 +44,8 @@ class AdminAboutView
 
 <p>This software is free and open!  Please see the <a href="https://github.com/cdhowie/Bitcoin-mining-proxy">project page on GitHub</a> to obtain a copy of the sources.</p>
 
+<p>This software may be distributed or hosted under the terms of the <a href="http://www.gnu.org/licenses/agpl.html">GNU Affero General Public License</a>, version 3 or later.  In section 13, the verbiage "users interacting with [this software] remotely through a computer network" shall apply only to those individuals having the proper credentials to authenticate with either the admin interface or the getwork proxy.  However, the software will, by default, comply with this requirement for all remote users.</p>
+
 <p>Writing this proxy script took time; please consider donating some bitcoins if you found it useful, after verifying that the address below is GPG-signed by my key (2B7AB2808B1221CC260ADF656FCE505ACF8338F5).</p>
 
 <pre>-----BEGIN PGP SIGNED MESSAGE-----

@@ -21,6 +21,10 @@
 
 require_once(dirname(__FILE__) . '/config.inc.php');
 
+# This header satisfies the Section 13 requirement in the AGPL for both
+# unauthenticated users and clients requesting work from the proxy.
+header('X-Source-Code: https://github.com/cdhowie/Bitcoin-mining-proxy');
+
 session_start();
 
 function db_connect() {
