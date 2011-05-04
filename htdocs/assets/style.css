@@ -102,6 +102,14 @@ table.data tr.disabled:hover {
     text-align: center;
 }
 
+#about {
+    width: 55em;
+    max-width: 100%;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+
 #recent-submissions,
 #recent-failed-submissions,
 #worker-status {
@@ -155,6 +163,10 @@ table.data tr.disabled:hover {
 
 #navmenu #nav-workers a span {
     background-image: url('icons/cog.png');
+}
+
+#navmenu #nav-about a span {
+    background-image: url('icons/information.png');
 }
 
 #recent-submissions h2,

@@ -28,7 +28,8 @@ abstract class MasterView
     private static $menuitems = array(
         array('dashboard', 'Dashboard', '/admin/'),
         array('pools',     'Pools',     '/admin/pool.php'),
-        array('workers',   'Workers',   '/admin/workers.php')
+        array('workers',   'Workers',   '/admin/workers.php'),
+        array('about',     'About',     '/admin/about.php')
     );
 
     protected function getMenuId()
