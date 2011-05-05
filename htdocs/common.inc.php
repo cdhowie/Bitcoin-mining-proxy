@@ -123,14 +123,24 @@ function echo_html($text) {
     echo htmlspecialchars($text);
 }
 
-function make_url($uri) {
+function get_site_uri() {
     global $BTC_PROXY;
 
-    return $BTC_PROXY['site_uri'] . $uri;
+    $site_uri = $BTC_PROXY['site_uri'];
+    $length = strlen($site_uri);
+
+    while ($length != 0 && $site_uri[$length - 1] == '/') {
+        $site_uri = substr($site_uri, 0, --$length);
+    }
+
+    return $site_uri;
 }
 
-function make_absolute_url($uri)
-{
+function make_url($uri) {
+    return get_site_uri() . $uri;
+}
+
+function make_absolute_url($uri) {
     global $BTC_PROXY;
 
     if (isset($_SERVER['HTTPS'])) {
@@ -144,7 +154,7 @@ function make_absolute_url($uri)
     $port = ($default_port == $_SERVER['SERVER_PORT']) ? "" :
         ":" . $_SERVER['SERVER_PORT'];
 
-    $base = "$scheme://{$_SERVER['SERVER_NAME']}$port{$BTC_PROXY['site_uri']}";
+    $base = "$scheme://{$_SERVER['SERVER_NAME']}$port" . get_site_uri();
 
     return $base . $uri;
 }
