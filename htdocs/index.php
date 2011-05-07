@@ -50,7 +50,7 @@ if ($worker_id === FALSE) {
 $q->closeCursor();
 
 
-function process_work($pdo, $worker_id, $pool_id, $response) {
+function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
     $q = $pdo->prepare('
         INSERT INTO work_data
 
@@ -59,10 +59,12 @@ function process_work($pdo, $worker_id, $pool_id, $response) {
         (:worker_id, :pool_id, :data, UTC_TIMESTAMP())
     ');
 
-    $q->execute(array(
-        'worker_id' => $worker_id,
-        'pool_id'   => $pool_id,
-        'data'      => substr($response->result->data, 0, 152)));
+    if (!$q->execute(array(
+        ':worker_id' => $worker_id,
+        ':pool_id'   => $pool_id,
+        ':data'      => substr($response->result->data, 0, 152)))) {
+        json_error('Database error on INSERT into work_data: ' . json_encode($q->errorInfo()), $json_id);
+    }
 }
 
 # Check request
@@ -105,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['lpurl']) && isset($_GET[
         json_error('Invalid response from long-poll request.', 'json');
     }
 
-    process_work($pdo, $worker_id, $pool, $response);
+    process_work($pdo, $worker_id, $pool, $response, $response->id);
 
     json_success($response->result, $response->id);
 } elseif ($_SERVER['REQUEST_METHOD'] != 'POST') {
@@ -230,7 +232,7 @@ foreach ($rows as $row) {
     }
 
     if (is_object($response)) {
-        process_work($pdo, $worker_id, $row['id'], $response);
+        process_work($pdo, $worker_id, $row['id'], $response, $response->id);
 
         json_success($response->result, $response->id);
     }
