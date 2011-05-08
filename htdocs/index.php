@@ -22,7 +22,6 @@
 require_once(dirname(__FILE__) . '/common.inc.php');
 
 
-
 # Authenticate
 
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
@@ -147,13 +146,14 @@ if (is_array($params) && count($params) == 1) {
 
           AND d.pool_id = p.id
 
-          AND wp.worker_id = :worker_id
+          AND wp.worker_id = :worker_id_two
           AND wp.pool_id = p.id
     ');
 
     $q->execute(array(
-        ':worker_id'    => $worker_id,
-        ':data'         => $data));
+        ':worker_id'     => $worker_id,
+        ':worker_id_two' => $worker_id,
+        ':data'          => $data));
 
     $row = $q->fetch();
     $q->closeCursor();

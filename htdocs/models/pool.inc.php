@@ -105,10 +105,12 @@ class PoolModel
             LEFT OUTER JOIN worker_pool wp
             ON p.id = :pool_id
 
-            WHERE p.id = :pool_id
+            WHERE p.id = :pool_id_two
         ');
 
-        if (!$q->execute(array(':pool_id' => $id))) {
+        if (!$q->execute(array(
+                ':pool_id'     => $id,
+                ':pool_id_two' => $id))) {
             return FALSE;
         }
 

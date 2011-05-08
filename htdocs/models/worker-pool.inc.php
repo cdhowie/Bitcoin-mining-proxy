@@ -84,14 +84,16 @@ class WorkerPoolModel
 
             LEFT OUTER JOIN worker_pool wp
                 ON wp.worker_id = :worker_id
-               AND wp.pool_id = :pool_id
+               AND wp.pool_id = :pool_id_two
 
-            WHERE w.id = :worker_id
+            WHERE w.id = :worker_id_two
         ');
 
         $q->execute(array(
-            ':worker_id'    => $this->worker_id,
-            ':pool_id'      => $this->pool_id
+            ':worker_id'     => $this->worker_id,
+            ':worker_id_two' => $this->worker_id,
+            ':pool_id'       => $this->pool_id
+            ':pool_id_two'   => $this->pool_id
         ));
 
         $row = $q->fetch(PDO::FETCH_ASSOC);
@@ -125,19 +127,23 @@ class WorkerPoolModel
             (:pool_id, :worker_id, :pool_username, :pool_password, :priority, :enabled)
 
             ON DUPLICATE KEY UPDATE
-                pool_username = :pool_username,
-                pool_password = :pool_password,
-                priority = :priority,
-                enabled = :enabled
+                pool_username = :pool_username_two,
+                pool_password = :pool_password_two,
+                priority = :priority_two,
+                enabled = :enabled_two
         ');
 
         $result = $q->execute(array(
-            ':pool_id'          => $this->pool_id,
-            ':worker_id'        => $this->worker_id,
-            ':pool_username'    => $this->pool_username,
-            ':pool_password'    => $this->pool_password,
-            ':priority'         => $this->priority,
-            ':enabled'          => $this->enabled));
+            ':pool_id'           => $this->pool_id,
+            ':worker_id'         => $this->worker_id,
+            ':pool_username'     => $this->pool_username,
+            ':pool_username_two' => $this->pool_username,
+            ':pool_password'     => $this->pool_password,
+            ':pool_password_two' => $this->pool_password,
+            ':priority'          => $this->priority,
+            ':priority_two'      => $this->priority,
+            ':enabled'           => $this->enabled,
+            ':enabled_two'       => $this->enabled));
 
         return (boolean)$result;
     }

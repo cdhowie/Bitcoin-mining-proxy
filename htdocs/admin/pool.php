@@ -120,11 +120,13 @@ class AdminPoolController extends AdminController
 
                 ON wp.pool_id = :pool_id
 
-                WHERE p.id = :pool_id
+                WHERE p.id = :pool_id_two
                   AND (wp.workers = 0 OR wp.workers IS NULL)
             ');
 
-            $q->execute(array(':pool_id' => $pool->id));
+            $q->execute(array(
+                ':pool_id'     => $pool->id,
+                ':pool_id_two' => $pool->id));
 
             if (!$q->rowCount()) {
                 $_SESSION['tempdata']['errors'][] = 'Pool still has workers; cannot delete.';
