@@ -88,6 +88,8 @@ class AdminDashboardView
         <th>Worker</th>
         <th>Last work request</th>
         <th>Last accepted submission</th>
+        <th>Shares/hour</th>
+        <th>Hashing speed</th>
     </tr>
     <?php foreach ($this->viewdata['worker-status'] as $row) { ?>
     <tr>
@@ -114,6 +116,20 @@ class AdminDashboardView
                 echo "Never";
             }
         ?></td>
+        <td><?php
+            if (isset($row['shares_last_hour'])) {
+                echo_html("{$row['shares_last_hour']} shares");
+            } else {
+                echo "No shares";
+            }
+        ?></td>
+        <td><?php
+            if (isset($row['mhash'])) {
+                echo_html("{$row['mhash']}");
+            } else {
+                echo "0";
+            }
+        ?> MHash/s</td>
     </tr>
     <?php } ?>
 </table>
