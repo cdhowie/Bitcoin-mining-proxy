@@ -70,7 +70,7 @@ function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
 
 $lpurl = $_GET['lpurl'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['lpurl']) && isset($_GET['pool'])) {
+if (isset($_GET['lpurl']) && isset($_GET['pool'])) {
     $lpurl = $_GET['lpurl'];
     $pool = $_GET['pool'];
 
