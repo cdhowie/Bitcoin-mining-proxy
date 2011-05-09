@@ -81,7 +81,10 @@ class AdminDashboardController extends AdminController
                 worked.latest AS active_time,
 
                 submitted.pool_name AS last_accepted_pool,
-                submitted.latest AS last_accepted_time
+                submitted.latest AS last_accepted_time,
+
+                shares_last_hour,
+                shares_last_hour*4294967296/3600/1000000 as mhash
 
             FROM worker w
 
@@ -143,6 +146,17 @@ class AdminDashboardController extends AdminController
             ) submitted
 
             ON submitted.worker_id = w.id
+
+            LEFT OUTER JOIN (
+                SELECT
+                    sw.worker_id,
+                    COUNT(result) as shares_last_hour
+                FROM
+                    submitted_work sw
+                WHERE
+                    DATE_ADD(time, INTERVAL 1 HOUR) > UTC_TIMESTAMP()
+            ) shares_last_hour
+            ON shares_last_hour.worker_id = w.id
 
             ORDER BY w.name
         ');
