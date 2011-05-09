@@ -92,7 +92,7 @@ class WorkerPoolModel
         $q->execute(array(
             ':worker_id'     => $this->worker_id,
             ':worker_id_two' => $this->worker_id,
-            ':pool_id'       => $this->pool_id
+            ':pool_id'       => $this->pool_id,
             ':pool_id_two'   => $this->pool_id
         ));
 
