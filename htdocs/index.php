@@ -68,8 +68,6 @@ function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
 
 # Check request
 
-$lpurl = $_GET['lpurl'];
-
 if (isset($_GET['lpurl']) && isset($_GET['pool'])) {
     $lpurl = $_GET['lpurl'];
     $pool = $_GET['pool'];
