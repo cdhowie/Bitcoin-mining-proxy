@@ -155,6 +155,8 @@ class AdminDashboardController extends AdminController
                     submitted_work sw
                 WHERE
                     DATE_ADD(time, INTERVAL 1 HOUR) > UTC_TIMESTAMP()
+                GROUP BY
+                    sw.worker_id
             ) shares_last_hour
             ON shares_last_hour.worker_id = w.id
 
