@@ -8,7 +8,11 @@ $BTC_PROXY = array(
     'admin_user'            => 'admin',
     'admin_password'        => 'changeme',
 
-    'site_uri'              => '/'
+    'site_uri'              => '/',
+
+    // Number of seconds to consider when calculating number of shares and
+    // average hashes/second. Default: 3600 (1 hour)
+    'average_interval'      => 3600
 );
 
 ?>

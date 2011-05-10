@@ -117,15 +117,15 @@ class AdminDashboardView
             }
         ?></td>
         <td><?php
-            if (isset($row['shares_last_hour'])) {
-                echo_html("{$row['shares_last_hour']} shares");
+            if (isset($row['shares_last_interval'])) {
+                echo_html("{$row['shares_last_interval']} shares");
             } else {
                 echo "No shares";
             }
         ?></td>
         <td><?php
             if (isset($row['mhash'])) {
-                echo_html("{$row['mhash']}");
+                print(round($row['mhash'],3));
             } else {
                 echo "0";
             }

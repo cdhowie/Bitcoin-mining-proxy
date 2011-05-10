@@ -27,6 +27,8 @@ class AdminDashboardController extends AdminController
 {
     public function indexDefaultView()
     {
+        global $BTC_PROXY;
+
         $viewdata = array();
 
         $pdo = db_connect();
@@ -83,8 +85,8 @@ class AdminDashboardController extends AdminController
                 submitted.pool_name AS last_accepted_pool,
                 submitted.latest AS last_accepted_time,
 
-                shares_last_hour,
-                shares_last_hour*4294967296/3600/1000000 as mhash
+                shares_last_interval,
+                shares_last_interval*4294967296/:average_interval/1000000 as mhash
 
             FROM worker w
 
@@ -150,18 +152,18 @@ class AdminDashboardController extends AdminController
             LEFT OUTER JOIN (
                 SELECT
                     sw.worker_id,
-                    COUNT(result) as shares_last_hour
+                    COUNT(result) as shares_last_interval
                 FROM
                     submitted_work sw
                 WHERE
-                    DATE_ADD(time, INTERVAL 1 HOUR) > UTC_TIMESTAMP()
+                    time >= UTC_TIMESTAMP() - INTERVAL :average_interval SECOND
                 GROUP BY
                     sw.worker_id
-            ) shares_last_hour
-            ON shares_last_hour.worker_id = w.id
+            ) shares_last_interval
+            ON shares_last_interval.worker_id = w.id
 
             ORDER BY w.name
-        ');
+        ', array(':average_interval' => $BTC_PROXY['average_interval']));
 
         return new AdminDashboardView($viewdata);
     }
