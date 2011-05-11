@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ERROR | E_USER_ERROR);
+
 $BTC_PROXY = array(
     'db_connection_string'  => 'mysql:host=localhost;dbname=bitcoin-mining-proxy',
     'db_user'               => 'bitcoin-mining-proxy',
