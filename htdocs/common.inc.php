@@ -100,7 +100,7 @@ function place_json_call($object, $url, $username = '', $password = '', &$header
             'method'    => 'POST',
             'header'    => "Content-Type: application/json-rpc\r\n$authHeader",
             'content'   => json_encode($object),
-            'timeout'   => 5
+            'timeout'   => 2
         );
     } else {
         $context_options = array(

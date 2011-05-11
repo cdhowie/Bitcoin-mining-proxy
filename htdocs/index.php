@@ -212,27 +212,27 @@ $request->id = "json";
 foreach ($rows as $row) {
     $response = place_json_call($request, $row['url'], $row['username'], $row['password'], $headers);
 
-    foreach ($headers as $header) {
-        $pieces = explode(': ', $header, 2);
-
-        if (count($pieces) == 2 && $pieces[0] == 'X-Long-Polling') {
-            $parts = parse_url($row['url']);
-
-            $lpurl = sprintf('%s://%s%s%s',
-                $parts['scheme'],
-                $parts['host'],
-                (isset($parts['port']) ? (':' . $parts['port']) : ''),
-                $pieces[1]);
-
-            header(sprintf('X-Long-Polling: %s?lpurl=%s&pool=%d',
-                $_SERVER['PHP_SELF'], urlencode($lpurl), $row['id']));
-        }
-    }
-
     if (is_object($response)) {
+        foreach ($headers as $header) {
+            $pieces = explode(': ', $header, 2);
+
+            if (count($pieces) == 2 && $pieces[0] == 'X-Long-Polling') {
+                $parts = parse_url($row['url']);
+
+                $lpurl = sprintf('%s://%s%s%s',
+                    $parts['scheme'],
+                    $parts['host'],
+                    (isset($parts['port']) ? (':' . $parts['port']) : ''),
+                    $pieces[1]);
+
+                header(sprintf('X-Long-Polling: %s?lpurl=%s&pool=%d',
+                    $_SERVER['PHP_SELF'], urlencode($lpurl), $row['id']));
+            }
+        }
+
         process_work($pdo, $worker_id, $row['id'], $response, $response->id);
 
-        json_success($response->result, $response->id);
+        json_success($response->result, $json->id);
     }
 }
 
