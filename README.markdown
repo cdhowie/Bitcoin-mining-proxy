@@ -82,3 +82,7 @@ If the submitted_work table is growing too large, you can execute a similar quer
 You may truncate this table if you wish since the miners do not depend on it to request work.  It is an informational table only.  However, keeping a week or two's worth of data around is a good idea in case you need to report a statistical discrepancy to a pool operator.  It's always good to have logs.
 
 The proxy may at some point be able to purge old data periodically by itself.  In the meantime, you will have to do so manually.
+
+Upgrading
+---------
+When upgrading the proxy software, make sure to inspect any changes to `htdocs/config.inc.php.sample` and apply them (with customizations) as needed to your local configuration.  Failure to do this might result in errant behavior.
