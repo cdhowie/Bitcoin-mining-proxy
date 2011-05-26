@@ -85,8 +85,8 @@ class AdminDashboardController extends AdminController
                 submitted.pool_name AS last_accepted_pool,
                 submitted.latest AS last_accepted_time,
 
-                shares_last_interval,
-                shares_last_interval*4294967296/:average_interval/1000000 as mhash
+                sli.shares_last_interval AS shares_last_interval,
+                sli.shares_last_interval * 4294967296 / :average_interval / 1000000 as mhash
 
             FROM worker w
 
@@ -151,19 +151,22 @@ class AdminDashboardController extends AdminController
 
             LEFT OUTER JOIN (
                 SELECT
-                    sw.worker_id,
-                    COUNT(result) as shares_last_interval
+                    worker_id,
+                    COUNT(result) AS shares_last_interval
                 FROM
                     submitted_work sw
                 WHERE
-                    time >= UTC_TIMESTAMP() - INTERVAL :average_interval SECOND
+                    time >= UTC_TIMESTAMP() - INTERVAL :average_interval_two SECOND
                 GROUP BY
                     sw.worker_id
-            ) shares_last_interval
-            ON shares_last_interval.worker_id = w.id
+            ) sli
+            ON sli.worker_id = w.id
 
             ORDER BY w.name
-        ', array(':average_interval' => $BTC_PROXY['average_interval']));
+        ', array(
+            ':average_interval'     => $BTC_PROXY['average_interval'],
+            ':average_interval_two' => $BTC_PROXY['average_interval']
+        ));
 
         return new AdminDashboardView($viewdata);
     }
