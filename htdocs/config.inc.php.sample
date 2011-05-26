@@ -10,7 +10,11 @@ $BTC_PROXY = array(
     'admin_user'            => 'admin',
     'admin_password'        => 'changeme',
 
-    'site_uri'              => '/'
+    'site_uri'              => '/',
+
+    # See <http://www.php.net/manual/en/timezones.php> for a list of timezones
+    'timezone'              => 'UTC',
+    'date_format'           => 'Y-m-d H:i:s T'
 );
 
 ?>

@@ -181,4 +181,15 @@ function get_tempdata($key)
     return $value;
 }
 
+function format_date($date)
+{
+    global $BTC_PROXY;
+
+    $obj = new DateTime($date, new DateTimeZone('UTC'));
+
+    $obj->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
+
+    return $obj->format($BTC_PROXY['date_format']);
+}
+
 ?>

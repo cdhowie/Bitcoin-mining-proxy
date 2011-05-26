@@ -47,9 +47,9 @@ class AdminDashboardView
     <?php foreach ($rows as $row) { ?>
     <tr class="<?php echo $row['result'] ? 'accepted' : 'rejected' ?>">
         <td><?php echo htmlspecialchars($row['worker']) ?></td>
-        <td><?php echo htmlspecialchars($row['pool'])   ?></td>
-        <td><?php echo $row['result'] ? 'Accepted' : 'Rejected' ?></td>
-        <td><?php echo htmlspecialchars($row['time'])   ?></td>
+        <td><?php echo htmlspecialchars($row['pool']) ?></td>
+        <td><?php echo $row['result'] ? 'Accepted' :'Rejected' ?></td>
+        <td><?php echo htmlspecialchars(format_date($row['time'])) ?></td>
     </tr>
     <?php } ?>
 <?php
@@ -102,14 +102,14 @@ class AdminDashboardView
         </td>
         <td><?php
             if (isset($row['active_pool'])) {
-                echo_html("At {$row['active_time']} from {$row['active_pool']}");
+                echo_html("At " . format_date($row['active_time']) . " from {$row['active_pool']}");
             } else {
                 echo "Never";
             }
         ?></td>
         <td><?php
             if (isset($row['last_accepted_pool'])) {
-                echo_html("At {$row['last_accepted_time']} to {$row['last_accepted_pool']}");
+                echo_html("At " . format_date($row['last_accepted_time']) . " to {$row['last_accepted_pool']}");
             } else {
                 echo "Never";
             }
