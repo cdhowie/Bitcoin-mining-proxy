@@ -40,17 +40,21 @@ class AdminDashboardController extends AdminController
                 sw.result AS result,
                 sw.time AS time
 
-            FROM
-                pool p,
-                worker w,
-                submitted_work sw
+            FROM (
+                SELECT pool_id, worker_id, result, time
 
-            WHERE sw.worker_id = w.id
-              AND sw.pool_id = p.id
+                FROM submitted_work
 
-            ORDER BY sw.id DESC
+                ORDER BY id DESC
 
-            LIMIT 10
+                LIMIT 10
+            ) sw
+
+            INNER JOIN pool p
+            ON p.id = sw.pool_id
+
+            INNER JOIN worker w
+            ON w.id = sw.worker_id
         ');
 
         $viewdata['recent-failed-submissions'] = db_query($pdo, '
@@ -60,18 +64,23 @@ class AdminDashboardController extends AdminController
                 sw.result AS result,
                 sw.time AS time
 
-            FROM
-                pool p,
-                worker w,
-                submitted_work sw
+            FROM (
+                SELECT pool_id, worker_id, result, time
 
-            WHERE sw.worker_id = w.id
-              AND sw.pool_id = p.id
-              AND sw.result = 0
+                FROM submitted_work
 
-            ORDER BY sw.id DESC
+                WHERE result = 0
 
-            LIMIT 10
+                ORDER BY id DESC
+
+                LIMIT 10
+            ) sw
+
+            INNER JOIN pool p
+            ON p.id = sw.pool_id
+
+            INNER JOIN worker w
+            ON w.id = sw.worker_id
         ');
 
         $viewdata['worker-status'] = db_query($pdo, '
