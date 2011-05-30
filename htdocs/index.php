@@ -160,7 +160,19 @@ if (is_array($params) && count($params) == 1) {
         json_error('Work not found in proxy database.', $json->id);
     }
 
-    $result = place_json_call($json, $row['url'], $row['username'], $row['password'], $headers);
+    for ($i = 10; $i > 0; $i--) {
+        $result = @place_json_call($json, $row['url'], $row['username'], $row['password'], $headers);
+
+        if (!$result) {
+            sleep(1);
+        } else {
+            break;
+        }
+    }
+
+    if (!$result) {
+        json_error('Work submission request failed too many times.', $json->id);
+    }
 
     $q = $pdo->prepare('
         INSERT INTO submitted_work
