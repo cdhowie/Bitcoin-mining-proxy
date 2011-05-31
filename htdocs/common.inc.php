@@ -106,7 +106,7 @@ function place_json_call($object, $url, $username = '', $password = '', &$header
         $context_options = array(
             'method'    => 'GET',
             'header'    => $authHeader,
-            'timeout'   => 86400
+            'timeout'   => 3900
         );
     }
 
