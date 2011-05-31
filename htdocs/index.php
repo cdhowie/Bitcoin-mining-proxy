@@ -71,13 +71,17 @@ function set_lp_header($headers, $id, $url) {
         $pieces = explode(': ', $header, 2);
 
         if (count($pieces) == 2 && $pieces[0] == 'X-Long-Polling') {
-            $parts = parse_url($url);
+            if (strpos($pieces[1], '://') !== FALSE) {
+                $lpurl = $pieces[1];
+            } else {
+                $parts = parse_url($url);
 
-            $lpurl = sprintf('%s://%s%s%s',
-                $parts['scheme'],
-                $parts['host'],
-                (isset($parts['port']) ? (':' . $parts['port']) : ''),
-                $pieces[1]);
+                $lpurl = sprintf('%s://%s%s%s',
+                    $parts['scheme'],
+                    $parts['host'],
+                    (isset($parts['port']) ? (':' . $parts['port']) : ''),
+                    $pieces[1]);
+            }
 
             header(sprintf('X-Long-Polling: %s?lpurl=%s&pool=%d',
                 $_SERVER['PHP_SELF'], urlencode($lpurl), $id));
