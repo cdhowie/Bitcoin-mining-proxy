@@ -125,26 +125,47 @@ if (isset($_GET['lpurl']) && isset($_GET['pool'])) {
 
     $q->closeCursor();
 
+    $lpstart = time();
+
     $response = place_json_call(null, $lpurl, $row['username'], $row['password'], $headers);
 
-    if (!is_object($response)) {
-        json_error('Invalid response from long-poll request, or request timed out.', 'json');
+    if (is_object($response) && is_object($response->result)) {
+        set_lp_header($headers, $pool, $row['url']);
+
+        process_work($pdo, $worker_id, $pool, $response, $response->id);
+
+        json_success($response->result, $response->id);
     }
 
-    set_lp_header($headers, $pool, $row['url']);
+    # If the long-polling request failed, delay so that the request lasts 30
+    # minutes overall, and then pretend that the user issued a getwork request.
+    # Some miners will disable their long-polling mechanism permanently if one
+    # long-polling request fails, so this will keep them happy.
 
-    process_work($pdo, $worker_id, $pool, $response, $response->id);
+    $duration = (30 * 60) - (time() - $lpstart);
+    if ($duration > 0) {
+        sleep($duration);
+    }
 
-    json_success($response->result, $response->id);
+    $force_getwork = true;
+
+    set_time_limit(120);
 } elseif ($_SERVER['REQUEST_METHOD'] != 'POST') {
     request_fail();
 }
 
-$body = @file_get_contents('php://input');
+if ($force_getwork) {
+    $json = new stdClass();
+    $json->method = 'getwork';
+    $json->params = array();
+    $json->id = 'json';
+} else {
+    $body = @file_get_contents('php://input');
 
-$json = json_decode($body);
-if ($json == NULL) {
-    request_fail();
+    $json = json_decode($body);
+    if ($json == NULL) {
+        request_fail();
+    }
 }
 
 if ($json->method != 'getwork') {
