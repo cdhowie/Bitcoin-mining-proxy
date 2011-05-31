@@ -51,7 +51,7 @@ $q->closeCursor();
 
 function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
     $q = $pdo->prepare('
-        INSERT INTO work_data
+        INSERT IGNORE INTO work_data
 
         (worker_id, pool_id, data, time_requested)
             VALUES
@@ -251,7 +251,7 @@ $request->id = "json";
 foreach ($rows as $row) {
     $response = place_json_call($request, $row['url'], $row['username'], $row['password'], $headers);
 
-    if (is_object($response))) {
+    if (is_object($response) && is_object($response->result)) {
         set_lp_header($headers, $row['id'], $row['url']);
 
         process_work($pdo, $worker_id, $row['id'], $response, $response->id);
