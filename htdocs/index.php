@@ -66,6 +66,27 @@ function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
     }
 }
 
+function set_lp_header($headers, $id, $url) {
+    foreach ($headers as $header) {
+        $pieces = explode(': ', $header, 2);
+
+        if (count($pieces) == 2 && $pieces[0] == 'X-Long-Polling') {
+            $parts = parse_url($url);
+
+            $lpurl = sprintf('%s://%s%s%s',
+                $parts['scheme'],
+                $parts['host'],
+                (isset($parts['port']) ? (':' . $parts['port']) : ''),
+                $pieces[1]);
+
+            header(sprintf('X-Long-Polling: %s?lpurl=%s&pool=%d',
+                $_SERVER['PHP_SELF'], urlencode($lpurl), $id));
+
+            break;
+        }
+    }
+}
+
 # Check request
 
 if (isset($_GET['lpurl']) && isset($_GET['pool'])) {
@@ -76,13 +97,15 @@ if (isset($_GET['lpurl']) && isset($_GET['pool'])) {
 
     $q = $pdo->prepare('
         SELECT
-            pool_username AS username,
-            pool_password AS password
+            wp.pool_username AS username,
+            wp.pool_password AS password,
+            p.url AS url
 
-        FROM worker_pool
+        FROM worker_pool wp, pool p
 
-        WHERE pool_id = :pool_id
-          AND worker_id = :worker_id
+        WHERE wp.pool_id = :pool_id
+          AND wp.worker_id = :worker_id
+          AND p.id = wp.pool_id
     ');
 
     $q->execute(array(
@@ -101,8 +124,10 @@ if (isset($_GET['lpurl']) && isset($_GET['pool'])) {
     $response = place_json_call(null, $lpurl, $row['username'], $row['password'], $headers);
 
     if (!is_object($response)) {
-        json_error('Invalid response from long-poll request.', 'json');
+        json_error('Invalid response from long-poll request, or request timed out.', 'json');
     }
+
+    set_lp_header($headers, $pool, $row['url']);
 
     process_work($pdo, $worker_id, $pool, $response, $response->id);
 
@@ -174,6 +199,8 @@ if (is_array($params) && count($params) == 1) {
         json_error('Work submission request failed too many times.', $json->id);
     }
 
+    set_lp_header($headers, $row['pool_id'], $row['url']);
+
     $q = $pdo->prepare('
         INSERT INTO submitted_work
 
@@ -224,23 +251,8 @@ $request->id = "json";
 foreach ($rows as $row) {
     $response = place_json_call($request, $row['url'], $row['username'], $row['password'], $headers);
 
-    if (is_object($response)) {
-        foreach ($headers as $header) {
-            $pieces = explode(': ', $header, 2);
-
-            if (count($pieces) == 2 && $pieces[0] == 'X-Long-Polling') {
-                $parts = parse_url($row['url']);
-
-                $lpurl = sprintf('%s://%s%s%s',
-                    $parts['scheme'],
-                    $parts['host'],
-                    (isset($parts['port']) ? (':' . $parts['port']) : ''),
-                    $pieces[1]);
-
-                header(sprintf('X-Long-Polling: %s?lpurl=%s&pool=%d',
-                    $_SERVER['PHP_SELF'], urlencode($lpurl), $row['id']));
-            }
-        }
+    if (is_object($response))) {
+        set_lp_header($headers, $row['id'], $row['url']);
 
         process_work($pdo, $worker_id, $row['id'], $response, $response->id);
 
