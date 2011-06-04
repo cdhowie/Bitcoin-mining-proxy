@@ -83,8 +83,8 @@ function set_lp_header($headers, $id, $url) {
                     $pieces[1]);
             }
 
-            header(sprintf('X-Long-Polling: %s?lpurl=%s&pool=%d',
-                $_SERVER['PHP_SELF'], urlencode($lpurl), $id));
+            header(sprintf('X-Long-Polling: %s/%d/%s',
+                $_SERVER['PHP_SELF'], $id, urlencode(base64_encode($lpurl))));
 
             break;
         }
@@ -93,9 +93,14 @@ function set_lp_header($headers, $id, $url) {
 
 # Check request
 
-if (isset($_GET['lpurl']) && isset($_GET['pool'])) {
-    $lpurl = $_GET['lpurl'];
-    $pool = $_GET['pool'];
+if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != '') {
+    $lpparts = explode('/', $_SERVER['PATH_INFO']);
+    if (count($lpparts) < 3) {
+        json_error('Malformed long-polling request URL.', 'json');
+    }
+
+    $pool = $lpparts[1];
+    $lpurl = base64_decode($lpparts[2]);
 
     set_time_limit(0);
 
