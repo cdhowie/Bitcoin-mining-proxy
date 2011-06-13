@@ -171,6 +171,8 @@ class MvcEngine
 {
     public static function run($controller)
     {
+        session_start();
+
         $controller->preExecute();
 
         $view = $controller->execute();
