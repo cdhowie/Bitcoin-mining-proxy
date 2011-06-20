@@ -1,6 +1,15 @@
 Installing bitcoin-mining-proxy
 ===============================
 
+Requirements
+------------
+
+* Apache (2.2 or newer recommended).
+* PHP 5.3 or newer.
+* MySQL (5.1 or newer recommended for best performance).
+
+There are some PHP options set in `htdocs/.htaccess`.  These settings must be set for the proxy to function correctly.  If you get an HTTP 500 error, your web server might not allow altering PHP options from .htaccess files.  In this case, make sure that the settings are properly changed either in your php.ini or Apache configuration, then remove or comment out the PHP-related options in `htdocs/.htaccess`.
+
 Setting up the database
 -----------------------
 
