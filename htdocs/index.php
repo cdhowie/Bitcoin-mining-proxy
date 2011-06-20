@@ -58,10 +58,12 @@ function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
         (:worker_id, :pool_id, :data, UTC_TIMESTAMP())
     ');
 
+    $data = strtolower(substr($response->result->data, 0, 152));
+
     if (!$q->execute(array(
         ':worker_id' => $worker_id,
         ':pool_id'   => $pool_id,
-        ':data'      => substr($response->result->data, 0, 152)))) {
+        ':data'      => $data))) {
         json_error('Database error on INSERT into work_data: ' . json_encode($q->errorInfo()), $json_id);
     }
 }
@@ -206,7 +208,7 @@ if (is_array($params) && count($params) == 1) {
     $q->execute(array(
         ':worker_id'     => $worker_id,
         ':worker_id_two' => $worker_id,
-        ':data'          => $data));
+        ':data'          => strtolower($data)));
 
     $row = $q->fetch();
     $q->closeCursor();
