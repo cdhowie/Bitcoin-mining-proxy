@@ -95,6 +95,8 @@ function set_lp_header($headers, $id, $url) {
 
 # Check request
 
+$force_getwork = false;
+
 if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != '') {
     $lpparts = explode('/', $_SERVER['PATH_INFO']);
     if (count($lpparts) < 3) {
