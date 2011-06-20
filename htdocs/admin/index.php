@@ -55,6 +55,8 @@ class AdminDashboardController extends AdminController
 
             INNER JOIN worker w
             ON w.id = sw.worker_id
+            
+            ORDER BY sw.time DESC
         ');
 
         $viewdata['recent-failed-submissions'] = db_query($pdo, '
@@ -81,6 +83,8 @@ class AdminDashboardController extends AdminController
 
             INNER JOIN worker w
             ON w.id = sw.worker_id
+            
+            ORDER BY sw.time DESC
         ');
 
         $viewdata['worker-status'] = db_query($pdo, '
