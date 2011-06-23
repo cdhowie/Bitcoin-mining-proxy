@@ -36,6 +36,16 @@ BEGIN
         COMMIT;
         SET @version = '1';
     END IF;
+    
+    IF @version = '1' THEN
+        ALTER TABLE `work_data` 
+            ADD INDEX `time_requested_index` (`time_requested`);
+        ALTER TABLE `work_data` 
+            ADD INDEX `pool_time` (`pool_id`, `time_requested`);
+        
+        COMMIT;
+        SET @version = '2';
+    END IF;
 
     -- Store updated version.
     UPDATE `settings` SET `value` = @version WHERE `key` = 'version';

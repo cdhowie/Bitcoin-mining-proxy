@@ -18,7 +18,11 @@ $BTC_PROXY = array(
 
     # Number of seconds to consider when calculating number of shares and
     # average hashes/second. Default: 3600 (1 hour)
-    'average_interval'      => 3600
+    'average_interval'      => 3600,
+    
+    # Percentage to highlight rejection percentage for pool status.
+    # Default: 3 (3%)
+    'rejected_alert'		=> 3
 );
 
 ?>
