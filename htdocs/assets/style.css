@@ -169,6 +169,25 @@ table.data tr.disabled:hover {
     background-image: url('icons/information.png');
 }
 
+#old-schema span {
+    display: block;
+    padding-left: 20px;
+    background-repeat: no-repeat;
+    background-image: url('icons/database_error.png');
+    background-position: left top;
+}
+
+#old-schema {
+    width: 50%;
+    margin: 0 auto;
+
+    color: #ffe;
+    background-color: #440;
+    border: 2px solid #880;
+
+    padding: 0.5em;
+}
+
 #recent-submissions h2,
 #recent-failed-submissions h2,
 #worker-status h2 {

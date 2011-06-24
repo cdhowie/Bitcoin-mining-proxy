@@ -181,6 +181,16 @@ class AdminDashboardController extends AdminController
             ':average_interval_two' => $BTC_PROXY['average_interval']
         ));
 
+        $version = db_query($pdo, "
+            SELECT value FROM settings
+
+            WHERE `key` = 'version'
+        ");
+
+        if ($version === false || count($version) == 0 || $version[0]['value'] != DB_SCHEMA_VERSION) {
+            $viewdata['old-schema'] = true;
+        }
+
         return new AdminDashboardView($viewdata);
     }
 }

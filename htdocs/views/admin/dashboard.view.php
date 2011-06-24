@@ -61,6 +61,10 @@ class AdminDashboardView
 
 <div id="dashboard">
 
+<?php if ($this->viewdata['old-schema']) { ?>
+<div id="old-schema"><span>Your database schema is out of date.  Please run the schema migration script (check the readme for instructions).  Until you migrate your database schema, you may notice errors or poor performance.</span></div>
+<?php } ?>
+
 <div id="recent-submissions">
 
 <h2>Recent work submissions</h2>

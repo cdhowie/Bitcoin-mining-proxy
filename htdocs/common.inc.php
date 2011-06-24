@@ -21,6 +21,8 @@
 
 require_once(dirname(__FILE__) . '/config.inc.php');
 
+define('DB_SCHEMA_VERSION', 1);
+
 # This header satisfies the Section 13 requirement in the AGPL for both
 # unauthenticated users and clients requesting work from the proxy.
 header('X-Source-Code: https://github.com/cdhowie/Bitcoin-mining-proxy');
@@ -33,6 +35,10 @@ function db_connect() {
 
 function db_query($pdo, $query, $args = array()) {
     $q = $pdo->prepare($query);
+
+    if ($q === false) {
+        return false;
+    }
 
     $q->execute($args);
 

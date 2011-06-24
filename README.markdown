@@ -95,3 +95,9 @@ The proxy may at some point be able to purge old data periodically by itself.  I
 Upgrading
 ---------
 When upgrading the proxy software, make sure to inspect any changes to `htdocs/config.inc.php.sample` and apply them (with customizations) as needed to your local configuration.  Failure to do this might result in errant behavior.
+
+You may additionally need to upgrade the database schema.  To do this, feed the `database/migrate.sql` file to the database, either using something like phpMyAdmin or the `mysql` command-line client:
+
+    mysql -p -u user-name database-name < database/migrate.sql
+
+This script will apply any schema changes to your existing database safely.  When run against a database with the latest version of the schema, it will do nothing.

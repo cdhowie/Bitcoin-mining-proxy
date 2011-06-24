@@ -45,7 +45,8 @@ CREATE TABLE `submitted_work` (
   `result` tinyint(1) NOT NULL,
   `time` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `dashboard_status_index` (`worker_id`,`result`,`time`)
+  KEY `dashboard_status_index` (`worker_id`,`result`,`time`),
+  KEY `dashboard_status_index2` (`time`,`worker_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -101,6 +102,25 @@ CREATE TABLE `worker_pool` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+--
+-- Table structure for table `settings`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE IF NOT EXISTS `settings` (
+  `key` varchar(50) NOT NULL,
+  `value` varchar(50) NOT NULL,
+  PRIMARY KEY (`key`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+INSERT INTO `settings` (`key`, `value`)
+    VALUES ('version', '1')
+
+    ON DUPLICATE KEY UPDATE `value` = '1';
+
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -108,5 +128,3 @@ CREATE TABLE `worker_pool` (
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
-
--- Dump completed on 2011-04-07 10:04:01
