@@ -63,7 +63,9 @@ CREATE TABLE `work_data` (
   `data` char(152) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `time_requested` datetime NOT NULL,
   PRIMARY KEY (`worker_id`,`data`),
-  KEY `worker_time` (`worker_id`,`time_requested`)
+  KEY `worker_time` (`worker_id`,`time_requested`),
+  KEY `time_requested_index` (`time_requested`),
+  KEY `pool_time` (`pool_id`, `time_requested`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -117,9 +119,9 @@ CREATE TABLE IF NOT EXISTS `settings` (
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 INSERT INTO `settings` (`key`, `value`)
-    VALUES ('version', '1')
+    VALUES ('version', '2')
 
-    ON DUPLICATE KEY UPDATE `value` = '1';
+    ON DUPLICATE KEY UPDATE `value` = '2';
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

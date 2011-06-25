@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+require_once(dirname(__FILE__) . '/../../config.inc.php');
 require_once(dirname(__FILE__) . '/../master.view.php');
 
 class AdminDashboardView
@@ -35,20 +36,20 @@ class AdminDashboardView
         return "dashboard";
     }
 
-    private function renderWorkTable($rows)
+    private function renderWorkTable($rows, $hideResultColumn = FALSE)
     {
 ?>
     <tr>
         <th>Worker</th>
         <th>Pool</th>
-        <th>Result</th>
+        <?php if (!$hideResultColumn) { ?><th>Result</th><?php } ?>
         <th>Time</th>
     </tr>
     <?php foreach ($rows as $row) { ?>
     <tr class="<?php echo $row['result'] ? 'accepted' : 'rejected' ?>">
         <td><?php echo htmlspecialchars($row['worker']) ?></td>
         <td><?php echo htmlspecialchars($row['pool']) ?></td>
-        <td><?php echo $row['result'] ? 'Accepted' :'Rejected' ?></td>
+        <?php if (!$hideResultColumn) { ?><td><?php echo $row['result'] ? 'Accepted' :'Rejected' ?></td><?php } ?>
         <td><?php echo htmlspecialchars(format_date($row['time'])) ?></td>
     </tr>
     <?php } ?>
@@ -57,6 +58,7 @@ class AdminDashboardView
 
     protected function renderBody()
     {
+        global $BTC_PROXY;
 ?>
 
 <div id="dashboard">
@@ -77,7 +79,7 @@ class AdminDashboardView
 
 <h2>Recent failed work submissions</h2>
 
-<table class="data"><?php $this->renderWorkTable($this->viewdata['recent-failed-submissions']) ?></table>
+<table class="data"><?php $this->renderWorkTable($this->viewdata['recent-failed-submissions'], TRUE) ?></table>
 
 </div>
 
@@ -92,30 +94,45 @@ class AdminDashboardView
         <th>Worker</th>
         <th>Last work request</th>
         <th>Last accepted submission</th>
-        <th>Shares/hour</th>
-        <th>Hashing speed</th>
+        <th>Shares<sup>*</sup></th>
+        <th>Rejected<sup>*</sup></th>
+        <th>Hashing speed<sup>*</sup></th>
     </tr>
     <?php foreach ($this->viewdata['worker-status'] as $row) { ?>
+    <?php if ($row['accepted_last_interval'] > 0 and round(($row['rejected_last_interval'] / $row['shares_last_interval']) * 100, 2) >= $BTC_PROXY['rejected_alert']) { ?>
+    <tr class="alert">
+    <?php } elseif (!isset($row['active_pool']) or !isset($row['last_accepted_pool']) or !isset($row['shares_last_interval'])) { ?>
+    <tr class="alert">
+    <?php } else { ?>
     <tr>
+    <?php } ?>
         <td>
             <form action="<?php echo_html(make_url('/admin/worker-pool.php')) ?>">
                 <fieldset>
                     <input type="hidden" name="id" value="<?php echo_html($row['worker_id']) ?>" />
-                    <?php $this->renderImageButton('index', 'manage-pools', 'Manage pools') ?>
+                    <?php $this->renderImageButton('index', 'manage-pools', 'Manage worker-pool') ?>
                 </fieldset>
             </form>
             <?php echo htmlspecialchars($row['worker']) ?>
         </td>
         <td><?php
-            if (isset($row['active_pool'])) {
-                echo_html("At " . format_date($row['active_time']) . " from {$row['active_pool']}");
+            if (isset($row['active_time'])) {
+                if (isset($row['active_pool'])) {
+                    echo_html("At " . format_date($row['active_time']) . " from {$row['active_pool']}");
+                } else {
+                    echo "At " . format_date($row['active_time']) . " from <i>(Unknown)</i>";
+                }
             } else {
                 echo "Never";
             }
         ?></td>
         <td><?php
-            if (isset($row['last_accepted_pool'])) {
-                echo_html("At " . format_date($row['last_accepted_time']) . " to {$row['last_accepted_pool']}");
+            if (isset($row['last_accepted_time'])) {
+                if (isset($row['last_accepted_pool'])) {
+                    echo_html("At " . format_date($row['last_accepted_time']) . " to {$row['last_accepted_pool']}");
+                } else {
+                    echo "At " . format_date($row['last_accepted_time']) . " to <i>(Unknown)</i>";
+                }
             } else {
                 echo "Never";
             }
@@ -128,12 +145,94 @@ class AdminDashboardView
             }
         ?></td>
         <td><?php
+            if (isset($row['shares_last_interval']) and isset($row['rejected_last_interval'])) {
+                if ($row['shares_last_interval'] > 0) {
+                    echo_html(number_format(($row['rejected_last_interval'] / $row['shares_last_interval']) * 100, 2).'%');
+                } else {
+                    echo "0.00%";
+                }
+            } else {
+                echo "0.00%";
+            }
+        ?></td>
+        <td><?php
             if (isset($row['mhash'])) {
                 print(round($row['mhash'],3));
             } else {
                 echo "0";
             }
         ?> MHash/s</td>
+    </tr>
+    <?php } ?>
+</table>
+
+</div>
+
+<br />
+
+<div id="pool-status">
+
+<h2>Pool status</h2>
+
+<table class="data">
+    <tr>
+        <th>Pool</th>
+        <th>Latest work requested</th>
+        <th>Getworks<sup>*</sup></th>
+        <th>Shares<sup>*</sup></th>
+        <th>Rejected<sup>*</sup></th>
+    </tr>
+    <?php foreach ($this->viewdata['pool-status'] as $row) { ?>
+    <?php if ($row['total'] > 0 and round(($row['rejected'] / $row['total']) * 100, 2) >= $BTC_PROXY['rejected_alert']) { ?>
+    <tr class="alert">
+    <?php } else { ?>
+    <tr>
+    <?php } ?>
+        <td>
+            <form action="<?php echo_html(make_url('/admin/pool.php')) ?>">
+                <fieldset>
+                    <input type="hidden" name="id" value="<?php echo_html($row['pool_id']) ?>" />
+                    <?php $this->renderImageButton('edit', 'edit-pool', 'Edit pool') ?>
+                </fieldset>
+            </form>
+            <?php echo htmlspecialchars($row['pool']) ?>
+        </td>
+        <td><?php
+            if (isset($row['last_request'])) {
+                if (isset($row['worker'])) {
+                    echo_html("By {$row['worker']} at " . format_date($row['last_request']));
+                } else {
+                    echo "By <i>(Unknown)</i> at " . format_date($row['last_request']);
+                }
+            } else {
+                echo "Never";
+            }
+        ?></td>
+        <td><?php
+            if (isset($row['getworks'])) {
+                echo_html($row['getworks']);
+            } else {
+                echo "0";
+            }
+        ?></td>
+        <td><?php
+            if (isset($row['total'])) {
+                echo_html($row['total']);
+            } else {
+                echo "0";
+            }
+        ?></td>
+        <td><?php
+            if (isset($row['total']) and isset($row['rejected'])) {
+                if ($row['total'] > 0) {
+                    echo_html(number_format(($row['rejected'] / $row['total']) * 100, 2).'%');
+                } else {
+                    echo "0.00%";
+                }
+            } else {
+                echo "0.00%";
+            }
+        ?></td>
     </tr>
     <?php } ?>
 </table>
