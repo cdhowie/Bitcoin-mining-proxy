@@ -66,12 +66,14 @@ table.data tr:hover {
 }
 
 table.data tr.rejected,
-table.data tr.disabled {
+table.data tr.disabled,
+table.data tr.alert {
     background-color: #522;
 }
 
 table.data tr.rejected:hover,
-table.data tr.disabled:hover {
+table.data tr.disabled:hover,
+table.data tr.alert:hover {
     background-color: #633;
 }
 
@@ -112,7 +114,8 @@ table.data tr.disabled:hover {
 
 #recent-submissions,
 #recent-failed-submissions,
-#worker-status {
+#worker-status,
+#pool-status {
     margin: 0 1em;
     padding: 0;
 
@@ -190,7 +193,8 @@ table.data tr.disabled:hover {
 
 #recent-submissions h2,
 #recent-failed-submissions h2,
-#worker-status h2 {
+#worker-status h2,
+#pool-status h2 {
     padding-left: 22px;
     background-repeat: no-repeat;
     background-position: left center;
@@ -206,6 +210,10 @@ table.data tr.disabled:hover {
 
 #worker-status h2 {
     background-image: url('icons/cog.png');
+}
+
+#pool-status h2 {
+    background-image: url('icons/server.png');
 }
 
 .enabled-column {

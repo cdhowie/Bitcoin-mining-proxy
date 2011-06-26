@@ -99,6 +99,8 @@ class AdminDashboardController extends AdminController
                 submitted.latest AS last_accepted_time,
 
                 sli.shares_last_interval AS shares_last_interval,
+                sli.accepted_last_interval,
+                sli.rejected_last_interval,
                 sli.shares_last_interval * 4294967296 / :average_interval / 1000000 as mhash
 
             FROM worker w
@@ -123,7 +125,7 @@ class AdminDashboardController extends AdminController
                     ON wd.worker_id = wd2.worker_id
                    AND wd.time_requested = wd2.latest
 
-                INNER JOIN pool p
+                LEFT OUTER JOIN pool p
                     ON p.id = wd.pool_id
 
                 GROUP BY wd.worker_id
@@ -154,7 +156,7 @@ class AdminDashboardController extends AdminController
                    AND sw.result = 1
                    AND sw.time = sw2.latest
 
-                INNER JOIN pool p
+                LEFT OUTER JOIN pool p
                     ON p.id = sw.pool_id
 
                 GROUP BY sw.worker_id
@@ -165,7 +167,9 @@ class AdminDashboardController extends AdminController
             LEFT OUTER JOIN (
                 SELECT
                     worker_id,
-                    COUNT(result) AS shares_last_interval
+                    COUNT(result) AS shares_last_interval,
+                    SUM(IF(result = 1, 1, 0)) accepted_last_interval,
+                    SUM(IF(result = 0, 1, 0)) rejected_last_interval
                 FROM
                     submitted_work sw
                 WHERE
@@ -180,7 +184,100 @@ class AdminDashboardController extends AdminController
             ':average_interval'     => $BTC_PROXY['average_interval'],
             ':average_interval_two' => $BTC_PROXY['average_interval']
         ));
-
+        
+        $viewdata['pool-status'] = db_query($pdo, '
+        
+            SELECT
+                p.id pool_id
+              , p.name pool
+              
+              , w.name worker
+              
+              , IFNULL(sw.accepted, 0) accepted
+              , IFNULL(sw.rejected, 0) rejected
+              , IFNULL(sw.accepted, 0) + IFNULL(sw.rejected, 0) total
+              
+              , IFNULL(wd.records, 0) getworks
+              , wd.last_request
+              
+            FROM
+                pool p
+                
+                INNER JOIN 
+                
+                (
+                    SELECT 
+                        IFNULL(wd.pool_id, wd2.pool_id) pool_id
+                      , worker_id
+                      , records
+                      , last_request
+                    FROM 
+                        (
+                            SELECT
+                                pool_id
+                              , COUNT(*) records
+                            FROM 
+                                work_data
+                            WHERE
+                                time_requested >= UTC_TIMESTAMP() - INTERVAL :average_interval_1 SECOND
+                            GROUP BY 
+                                pool_id
+                        ) wd
+                        RIGHT JOIN
+                        (
+                            SELECT 
+                                wd4.pool_id
+                              , wd3.worker_id
+                              , wd4.last_request
+                            FROM 
+                                work_data wd3
+                                INNER JOIN
+                                (
+                                    SELECT
+                                        pool_id
+                                      , MAX(time_requested) AS last_request
+                                    FROM
+                                        work_data
+                                    GROUP BY
+                                        pool_id
+                                ) wd4
+                                ON wd3.time_requested = wd4.last_request
+                            GROUP BY
+                                wd4.pool_id
+                        ) wd2
+                        ON wd.pool_id = wd2.pool_id
+                ) wd
+                
+                ON p.id = wd.pool_id
+                
+                LEFT OUTER JOIN
+                (
+                    SELECT 
+                        pool_id
+                      , SUM(IF(result = 1, 1, 0)) accepted
+                      , SUM(IF(result = 1, 0, 1)) rejected
+                    FROM 
+                        submitted_work
+                    WHERE 
+                        time >= UTC_TIMESTAMP() - INTERVAL :average_interval_2 SECOND
+                    GROUP BY 
+                        pool_id
+                ) sw
+                
+                ON wd.pool_id = sw.pool_id
+                
+                INNER JOIN worker w
+                ON wd.worker_id = w.id
+                
+            WHERE
+                p.enabled = 1
+                
+                
+        ', array(
+            ':average_interval_1'     => $BTC_PROXY['average_interval'],
+            ':average_interval_2'     => $BTC_PROXY['average_interval']
+        ));
+        
         $version = db_query($pdo, "
             SELECT value FROM settings
 
@@ -190,7 +287,7 @@ class AdminDashboardController extends AdminController
         if ($version === false || count($version) == 0 || $version[0]['value'] != DB_SCHEMA_VERSION) {
             $viewdata['old-schema'] = true;
         }
-
+        
         return new AdminDashboardView($viewdata);
     }
 }
