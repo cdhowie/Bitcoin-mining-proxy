@@ -139,9 +139,9 @@ class AdminDashboardView
         ?></td>
         <td><?php
             if (isset($row['shares_last_interval'])) {
-                echo_html("{$row['shares_last_interval']} shares");
+                echo_html($row['shares_last_interval']);
             } else {
-                echo "No shares";
+                echo "0";
             }
         ?></td>
         <td><?php
