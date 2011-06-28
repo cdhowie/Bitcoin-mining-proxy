@@ -14,7 +14,8 @@ $BTC_PROXY = array(
 
     # See <http://www.php.net/manual/en/timezones.php> for a list of timezones
     'timezone'              => 'UTC',
-    'date_format'           => 'Y-m-d H:i:s T',
+    # Custom php date format or "human" for "x days/minutes/seconds" ago
+    'date_format'           => 'human',
 
     # Number of seconds to consider when calculating number of shares and
     # average hashes/second. Default: 3600 (1 hour)
