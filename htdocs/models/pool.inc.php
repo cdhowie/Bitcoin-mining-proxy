@@ -103,7 +103,7 @@ class PoolModel
             FROM pool p
 
             LEFT OUTER JOIN worker_pool wp
-            ON p.id = :pool_id
+            ON wp.pool_id = :pool_id
 
             WHERE p.id = :pool_id_two
         ');
