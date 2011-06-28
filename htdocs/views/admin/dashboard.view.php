@@ -63,8 +63,12 @@ class AdminDashboardView
 
 <div id="dashboard">
 
+<?php if ($this->viewdata['url-fopen-disabled']) { ?>
+<div id="url-fopen-disabled" class="dashboard-error"><span>The <tt>allow_url_fopen</tt> PHP configuration option is disabled.  <b>The proxy will be unable to contact pools until this option is enabled.</b></span></div>
+<?php } ?>
+
 <?php if ($this->viewdata['old-schema']) { ?>
-<div id="old-schema"><span>Your database schema is out of date.  Please run the schema migration script (check the readme for instructions).  Until you migrate your database schema, you may notice errors or poor performance.</span></div>
+<div id="old-schema" class="dashboard-warning"><span>Your database schema is out of date.  Please run the schema migration script (check the readme for instructions).  Until you migrate your database schema, you may notice errors or poor performance.</span></div>
 <?php } ?>
 
 <div id="recent-submissions">

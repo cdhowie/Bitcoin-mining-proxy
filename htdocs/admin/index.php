@@ -287,7 +287,11 @@ class AdminDashboardController extends AdminController
         if ($version === false || count($version) == 0 || $version[0]['value'] != DB_SCHEMA_VERSION) {
             $viewdata['old-schema'] = true;
         }
-        
+
+        if (ini_get('allow_url_fopen') != 1) {
+            $viewdata['url-fopen-disabled'] = true;
+        }
+
         return new AdminDashboardView($viewdata);
     }
 }

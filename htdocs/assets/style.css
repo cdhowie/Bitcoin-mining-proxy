@@ -172,23 +172,44 @@ table.data tr.alert:hover {
     background-image: url('icons/information.png');
 }
 
-#old-schema span {
+.dashboard-warning span,
+.dashboard-error span {
     display: block;
     padding-left: 20px;
     background-repeat: no-repeat;
-    background-image: url('icons/database_error.png');
     background-position: left top;
 }
 
-#old-schema {
+.dashboard-warning,
+.dashboard-error {
     width: 50%;
     margin: 0 auto;
 
-    color: #ffe;
-    background-color: #440;
-    border: 2px solid #880;
+    border: 2px solid;
 
     padding: 0.5em;
+
+    margin-bottom: 0.5em;
+}
+
+.dashboard-warning {
+    color: #ffe;
+    background-color: #440;
+    border-color: #880;
+}
+
+.dashboard-error {
+    color: #fee;
+    background-color: #600;
+    border-color: #c00;
+}
+
+#old-schema span {
+    background-image: url('icons/database_error.png');
+}
+
+#url-fopen-disabled span {
+    background-image: url('icons/exclamation.png');
 }
 
 #recent-submissions h2,
