@@ -12,6 +12,9 @@ $BTC_PROXY = array(
 
     'site_uri'              => '/',
 
+    # Set to false to disable long-polling support completely.
+    'long_polling'          => TRUE,
+
     # See <http://www.php.net/manual/en/timezones.php> for a list of timezones
     'timezone'              => 'UTC',
     'date_format'           => 'Y-m-d H:i:s T',

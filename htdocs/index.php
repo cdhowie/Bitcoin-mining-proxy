@@ -69,6 +69,11 @@ function process_work($pdo, $worker_id, $pool_id, $response, $json_id) {
 }
 
 function set_headers($headers, $id, $url) {
+    global $BTC_PROXY;
+
+    $lpEnabled = isset($BTC_PROXY['long_polling']) ?
+        $BTC_PROXY['long_polling'] : true;
+
     foreach ($headers as $fullHeader) {
         $pieces = explode(': ', $fullHeader, 2);
 
@@ -79,7 +84,7 @@ function set_headers($headers, $id, $url) {
         $header = strtolower($pieces[0]);
         $value = $pieces[1];
 
-        if ($header == 'x-long-polling') {
+        if ($lpEnabled && $header == 'x-long-polling') {
             if (strpos($value, '://') !== FALSE) {
                 $lpurl = $value;
             } else {
