@@ -11,6 +11,9 @@ DELIMITER $$
 CREATE PROCEDURE `upgrade_schema`()
 ret:
 BEGIN
+    DECLARE current_version INT DEFAULT 0;
+    DECLARE target_version INT DEFAULT 3;
+
     SET autocommit = 0;
 
     -- Create settings table for users who don't have it.
@@ -24,35 +27,79 @@ BEGIN
     INSERT IGNORE INTO `settings` (`key`, `value`)
         VALUES ('version', '0');
 
-    -- Get current DB version.
-    SELECT @version := `value` FROM `settings` WHERE `key` = 'version';
+    -- Fetch the current version out of the database.
+    SELECT `value` INTO current_version
+        FROM `settings` WHERE `key` = 'version';
 
-    -- Upgrade paths for each version:
+    -- If the current version is the target, then nothing needs to be done.
+    IF current_version = target_version THEN
+        SELECT CONCAT(
+            'Current database version is ',
+            current_version,
+            ', which is the latest.  No migration is necessary.'
+        ) AS ' ';
+        LEAVE ret;
+    END IF;
 
-    IF @version = '0' THEN
+    SELECT CONCAT(
+        'Current database version is ',
+        current_version,
+        '.  Attempting migration to version ',
+        target_version,
+        '.'
+    ) AS ' ';
+
+    -- Migrate paths for each version:
+
+    IF current_version = '0' THEN
+        SELECT 'Migrating 0 -> 1 ...' AS ' ';
+
         ALTER TABLE `submitted_work`
             ADD INDEX `dashboard_status_index2` (`time`, `worker_id`);
 
+        UPDATE `settings` SET `value` = '1' WHERE `key` = 'version';
         COMMIT;
-        SET @version = '1';
+        SET current_version = '1';
     END IF;
     
-    IF @version = '1' THEN
+    IF current_version = '1' THEN
+        SELECT 'Migrating 1 -> 2 ...' AS ' ';
+
         ALTER TABLE `work_data` 
             ADD INDEX `time_requested_index` (`time_requested`);
         ALTER TABLE `work_data` 
             ADD INDEX `pool_time` (`pool_id`, `time_requested`);
         
+        UPDATE `settings` SET `value` = '2' WHERE `key` = 'version';
         COMMIT;
-        SET @version = '2';
+        SET current_version = '2';
     END IF;
 
-    -- Store updated version.
-    UPDATE `settings` SET `value` = @version WHERE `key` = 'version';
-    COMMIT;
+    IF current_version = '2' THEN
+        SELECT 'Migrating 2 -> 3 ...' AS ' ';
 
-    -- Message for the console.
-    SELECT 'Database upgraded successfully.';
+        BEGIN
+            DECLARE EXIT HANDLER FOR SQLEXCEPTION
+                SELECT 'The work_data.data column cannot be shrunk because that would result in duplicate primary key values.  Please truncate the work_data table and try migrating again.' AS ' ';
+
+            ALTER TABLE `work_data`
+                CHANGE `data`
+                `data` CHAR(136)
+                       CHARACTER SET ascii
+                       COLLATE ascii_bin
+                       NOT NULL;
+
+            UPDATE `settings` SET `value` = '3' WHERE `key` = 'version';
+            COMMIT;
+            SET current_version = '3';
+        END;
+    END IF;
+
+    SELECT CONCAT('Final database version: ', current_version, '.') AS ' ';
+
+    SELECT IF(current_version = target_version,
+        'Database migrated successfully.',
+        'Database migration did not fully complete.  Correct the errors displayed above and try again.') AS ' ';
 END
 
 $$

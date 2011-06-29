@@ -21,7 +21,7 @@
 
 require_once(dirname(__FILE__) . '/config.inc.php');
 
-define('DB_SCHEMA_VERSION', 2);
+define('DB_SCHEMA_VERSION', 3);
 
 # This header satisfies the Section 13 requirement in the AGPL for both
 # unauthenticated users and clients requesting work from the proxy.

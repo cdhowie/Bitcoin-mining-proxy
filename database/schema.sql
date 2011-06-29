@@ -60,7 +60,7 @@ DROP TABLE IF EXISTS `work_data`;
 CREATE TABLE `work_data` (
   `worker_id` int(11) NOT NULL,
   `pool_id` int(11) NOT NULL,
-  `data` char(152) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+  `data` char(136) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `time_requested` datetime NOT NULL,
   PRIMARY KEY (`worker_id`,`data`),
   KEY `worker_time` (`worker_id`,`time_requested`),
@@ -119,9 +119,9 @@ CREATE TABLE IF NOT EXISTS `settings` (
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 INSERT INTO `settings` (`key`, `value`)
-    VALUES ('version', '2')
+    VALUES ('version', '3')
 
-    ON DUPLICATE KEY UPDATE `value` = '2';
+    ON DUPLICATE KEY UPDATE `value` = '3';
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
