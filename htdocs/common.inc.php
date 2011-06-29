@@ -68,8 +68,12 @@ function request_fail() {
 }
 
 function json_error($message, $id) {
+    $error = new stdClass();
+    $error->code = 0; // TODO
+    $error->message = $message;
+
     $object = new stdClass();
-    $object->error = $message;
+    $object->error = $error;
     $object->result = null;
     $object->id = $id;
 
