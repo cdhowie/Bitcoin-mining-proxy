@@ -162,7 +162,7 @@ function make_absolute_url($uri) {
     $port = ($default_port == $_SERVER['SERVER_PORT']) ? "" :
         ":" . $_SERVER['SERVER_PORT'];
 
-    $base = "$scheme://{$_SERVER['SERVER_NAME']}$port" . get_site_uri();
+    $base = "$scheme://{$_SERVER['HTTP_HOST']}$port" . get_site_uri();
 
     return $base . $uri;
 }
