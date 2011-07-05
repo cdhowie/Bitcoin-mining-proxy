@@ -189,15 +189,36 @@ function get_tempdata($key)
     return $value;
 }
 
-function format_date($date)
+function human_time($difference)
 {
-    global $BTC_PROXY;
+        $postfix = array("second", "minute", "hour", "day", "week", "month", "year");
+        $lengths = array(60, 60, 24, 7, 4.3452380952380952380952380952381, 12);
 
-    $obj = new DateTime($date, new DateTimeZone('UTC'));
+        for($i = 0; $difference >= $lengths[$i]; $i++)
+                $difference /= $lengths[$i];
 
-    $obj->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
+	$difference = round($difference);
 
-    return $obj->format($BTC_PROXY['date_format']);
+        if($difference != 1)
+                $postfix[$i] .= "s";
+
+        return "$difference $postfix[$i] ago";
 }
 
+function format_date($date)
+{
+        global $BTC_PROXY;
+        $obj = new DateTime($date, new DateTimeZone('UTC'));
+        $obj->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
+
+        if($BTC_PROXY['date_format'] != "human")
+                return $obj->format($BTC_PROXY['date_format']);
+        else
+        {
+                $now = new DateTime("now", new DateTimeZone('UTC'));
+                $now->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
+                $timespan = $now->getTimestamp() - $obj->getTimestamp();
+                return human_time($timespan);
+        }
+}
 ?>
