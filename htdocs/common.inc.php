@@ -96,7 +96,7 @@ function json_response($object) {
     exit;
 }
 
-function place_json_call($object, $url, $username = '', $password = '', &$headers) {
+function place_json_call($object, $url, $username = '', $password = '', &$headers, $timeout = 2) {
     $authHeader = "";
 
     if (strlen($username) != 0) {
@@ -108,13 +108,13 @@ function place_json_call($object, $url, $username = '', $password = '', &$header
             'method'    => 'POST',
             'header'    => "Content-Type: application/json-rpc\r\n$authHeader",
             'content'   => json_encode($object),
-            'timeout'   => 2
+            'timeout'   => $timeout
         );
     } else {
         $context_options = array(
             'method'    => 'GET',
             'header'    => $authHeader,
-            'timeout'   => 3900
+            'timeout'   => $timeout
         );
     }
 

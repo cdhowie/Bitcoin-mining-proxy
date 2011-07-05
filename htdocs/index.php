@@ -148,7 +148,7 @@ if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] != '') {
 
     $lpstart = time();
 
-    $response = place_json_call(null, $lpurl, $row['username'], $row['password'], $headers);
+    $response = place_json_call(null, $lpurl, $row['username'], $row['password'], $headers, 3900);
 
     if (is_object($response) && is_object($response->result)) {
         set_headers($headers, $pool, $row['url']);
@@ -232,7 +232,7 @@ if (is_array($params) && count($params) == 1) {
     }
 
     for ($i = 10; $i > 0; $i--) {
-        $result = @place_json_call($json, $row['url'], $row['username'], $row['password'], $headers);
+        $result = @place_json_call($json, $row['url'], $row['username'], $row['password'], $headers, 30);
 
         if (!$result) {
             sleep(1);
