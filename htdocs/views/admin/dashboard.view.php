@@ -122,9 +122,9 @@ class AdminDashboardView
         <td><?php
             if (isset($row['active_time'])) {
                 if (isset($row['active_pool'])) {
-                    echo_html("At " . format_date($row['active_time']) . " from {$row['active_pool']}");
+                    echo_html(format_date_with_prefix($row['active_time'], true) . " from {$row['active_pool']}");
                 } else {
-                    echo "At " . format_date($row['active_time']) . " from <i>(Unknown)</i>";
+                    echo format_date_with_prefix($row['active_time'], true) . " from <i>(Unknown)</i>";
                 }
             } else {
                 echo "Never";
@@ -133,9 +133,9 @@ class AdminDashboardView
         <td><?php
             if (isset($row['last_accepted_time'])) {
                 if (isset($row['last_accepted_pool'])) {
-                    echo_html("At " . format_date($row['last_accepted_time']) . " to {$row['last_accepted_pool']}");
+                    echo_html(format_date_with_prefix($row['last_accepted_time'], true) . " to {$row['last_accepted_pool']}");
                 } else {
-                    echo "At " . format_date($row['last_accepted_time']) . " to <i>(Unknown)</i>";
+                    echo format_date_with_prefix($row['last_accepted_time'], true) . " to <i>(Unknown)</i>";
                 }
             } else {
                 echo "Never";
@@ -204,9 +204,9 @@ class AdminDashboardView
         <td><?php
             if (isset($row['last_request'])) {
                 if (isset($row['worker'])) {
-                    echo_html("By {$row['worker']} at " . format_date($row['last_request']));
+                    echo_html("By {$row['worker']} " . format_date_with_prefix($row['last_request'], false));
                 } else {
-                    echo "By <i>(Unknown)</i> at " . format_date($row['last_request']);
+                    echo "By <i>(Unknown)</i> " . format_date_with_prefix($row['last_request'], false);
                 }
             } else {
                 echo "Never";

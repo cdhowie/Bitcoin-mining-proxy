@@ -226,4 +226,19 @@ function format_date($date)
     }
 }
 
+function format_date_with_prefix($date, $capitalize)
+{
+    global $BTC_PROXY;
+
+    $date = format_date($date);
+
+    $prefix = '';
+
+    if ($BTC_PROXY['date_format'] != "human") {
+        $prefix = $capitalize ? 'At ' : 'at ';
+    }
+
+    return $prefix . $date;
+}
+
 ?>
