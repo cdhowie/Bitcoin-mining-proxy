@@ -189,36 +189,41 @@ function get_tempdata($key)
     return $value;
 }
 
+$HUMAN_TIME_POSTFIX = array("second", "minute", "hour", "day", "week", "month", "year");
+$HUMAN_TIME_LENGTHS = array(60, 60, 24, 7, 4.3452380952380952380952380952381, 12);
+
 function human_time($difference)
 {
-        $postfix = array("second", "minute", "hour", "day", "week", "month", "year");
-        $lengths = array(60, 60, 24, 7, 4.3452380952380952380952380952381, 12);
+    global $HUMAN_TIME_POSTFIX, $HUMAN_TIME_LENGTHS;
 
-        for($i = 0; $difference >= $lengths[$i]; $i++)
-                $difference /= $lengths[$i];
+    for ($i = 0; $difference >= $HUMAN_TIME_LENGTHS[$i]; $i++)
+        $difference /= $HUMAN_TIME_LENGTHS[$i];
 
-	$difference = round($difference);
+    $difference = round($difference);
 
-        if($difference != 1)
-                $postfix[$i] .= "s";
+    $postfix = $HUMAN_TIME_POSTFIX[$i];
 
-        return "$difference $postfix[$i] ago";
+    if ($difference != 1)
+        $postfix .= "s";
+
+    return "$difference $postfix ago";
 }
 
 function format_date($date)
 {
-        global $BTC_PROXY;
-        $obj = new DateTime($date, new DateTimeZone('UTC'));
-        $obj->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
+    global $BTC_PROXY;
 
-        if($BTC_PROXY['date_format'] != "human")
-                return $obj->format($BTC_PROXY['date_format']);
-        else
-        {
-                $now = new DateTime("now", new DateTimeZone('UTC'));
-                $now->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
-                $timespan = $now->getTimestamp() - $obj->getTimestamp();
-                return human_time($timespan);
-        }
+    $obj = new DateTime($date, new DateTimeZone('UTC'));
+    $obj->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
+
+    if ($BTC_PROXY['date_format'] != "human") {
+        return $obj->format($BTC_PROXY['date_format']);
+    } else {
+        $now = new DateTime("now", new DateTimeZone('UTC'));
+        $now->setTimezone(new DateTimeZone($BTC_PROXY['timezone']));
+        $timespan = $now->getTimestamp() - $obj->getTimestamp();
+        return human_time($timespan);
+    }
 }
+
 ?>
