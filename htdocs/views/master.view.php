@@ -112,8 +112,17 @@ abstract class MasterView
     <head>
         <title><?php echo_html($title) ?></title>
         <link rel="stylesheet" type="text/css" href="<?php echo_html(make_url('/assets/style.css')) ?>" />
+        <script type="text/JavaScript">
+        function timedRefresh(timeoutPeriod) {
+           setTimeout("location.reload(true);",timeoutPeriod);
+        }
+        </script>
     </head>
-    <body>
+<?php if ($BTC_PROXY['refresh_interval'] > 0) { 
+    echo "<body onload=\"JavaScript:timedRefresh({$BTC_PROXY['refresh_interval']});\">";
+} else {
+    echo "<body>";
+} ?>
         <h1><?php echo_html($title) ?></h1>
 
         <ul id="navmenu">
