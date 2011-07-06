@@ -28,8 +28,14 @@ class AdminDashboardController extends AdminController
     public function indexDefaultView()
     {
         global $BTC_PROXY;
-
         $viewdata = array();
+
+        $interval = $_REQUEST['interval'];
+        if (strlen($interval) > 0) {
+            $viewdata['interval_override'] = $interval;
+        } else {
+            $interval = $BTC_PROXY['average_interval'];
+        }
 
         $pdo = db_connect();
 
@@ -181,8 +187,8 @@ class AdminDashboardController extends AdminController
 
             ORDER BY w.name
         ', array(
-            ':average_interval'     => $BTC_PROXY['average_interval'],
-            ':average_interval_two' => $BTC_PROXY['average_interval']
+            ':average_interval'     => $interval,
+            ':average_interval_two' => $interval
         ));
         
         $viewdata['pool-status'] = db_query($pdo, '
@@ -274,8 +280,8 @@ class AdminDashboardController extends AdminController
                 
                 
         ', array(
-            ':average_interval_1'     => $BTC_PROXY['average_interval'],
-            ':average_interval_2'     => $BTC_PROXY['average_interval']
+            ':average_interval_1'     => $interval,
+            ':average_interval_2'     => $interval
         ));
         
         $version = db_query($pdo, "
