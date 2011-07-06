@@ -51,8 +51,8 @@ abstract class MasterView
 
             foreach ($types as $type) {
                 $parts = explode(';', $type);
-                if ($parts[0] == 'application/xhtml+xml') {
-                    header('Content-Type: application/xhtml+xml');
+                if ($parts[0] == 'application/xhtml') {
+                    header('Content-Type: application/xhtml');
                     return;
                 }
             }
@@ -112,6 +112,10 @@ abstract class MasterView
     <head>
         <title><?php echo_html($title) ?></title>
         <link rel="stylesheet" type="text/css" href="<?php echo_html(make_url('/assets/style.css')) ?>" />
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load('visualization', '1', {packages: ['corechart']});
+        </script>
         <script type="text/JavaScript">
         function timedRefresh(timeoutPeriod) {
            setTimeout("location.reload(true);",timeoutPeriod);

@@ -31,7 +31,8 @@ $BTC_PROXY = array(
 
     # Dashboard configuration
     'recent_work_num'       => 5,
-    'refresh_interval'      => 300000 # milliseconds, 0 to disable
+    'refresh_interval'      => 300000, # milliseconds, 0 to disable
+    'enable_graphs'         => TRUE
 );
 
 ?>
