@@ -29,7 +29,8 @@ $BTC_PROXY = array(
     'rejected_alert'        => 3,
 
     # Dashboard configuration
-    'recent_work_num'       => 5
+    'recent_work_num'       => 5,
+    'refresh_interval'      => 300000 # milliseconds, 0 to disable
 );
 
 ?>
