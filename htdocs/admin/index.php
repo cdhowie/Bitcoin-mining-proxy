@@ -33,7 +33,7 @@ class AdminDashboardController extends AdminController
 
         $pdo = db_connect();
 
-        $viewdata['recent-submissions'] = db_query($pdo, '
+        $viewdata['recent-submissions'] = db_query($pdo, "
             SELECT
                 w.name AS worker,
                 p.name AS pool,
@@ -47,7 +47,7 @@ class AdminDashboardController extends AdminController
 
                 ORDER BY id DESC
 
-                LIMIT 10
+                LIMIT {$BTC_PROXY['recent_work_num']}
             ) sw
 
             INNER JOIN pool p
@@ -57,9 +57,9 @@ class AdminDashboardController extends AdminController
             ON w.id = sw.worker_id
             
             ORDER BY sw.time DESC
-        ');
+        ");
 
-        $viewdata['recent-failed-submissions'] = db_query($pdo, '
+        $viewdata['recent-failed-submissions'] = db_query($pdo, " 
             SELECT
                 w.name AS worker,
                 p.name AS pool,
@@ -75,7 +75,7 @@ class AdminDashboardController extends AdminController
 
                 ORDER BY id DESC
 
-                LIMIT 10
+                LIMIT {$BTC_PROXY['recent_work_num']}
             ) sw
 
             INNER JOIN pool p
@@ -85,7 +85,7 @@ class AdminDashboardController extends AdminController
             ON w.id = sw.worker_id
             
             ORDER BY sw.time DESC
-        ');
+        ");
 
         $viewdata['worker-status'] = db_query($pdo, '
             SELECT

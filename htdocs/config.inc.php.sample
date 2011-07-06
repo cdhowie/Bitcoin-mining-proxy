@@ -27,7 +27,10 @@ $BTC_PROXY = array(
     # Percentage to highlight rejection percentage for pool status.
     # Default: 3 (3%)
     'rejected_alert'        => 3,
-    'getwork_retries'       => 5
+    'getwork_retries'       => 5,
+
+    # Dashboard configuration
+    'recent_work_num'       => 5
 );
 
 ?>
