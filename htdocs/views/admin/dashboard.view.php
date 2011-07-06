@@ -243,6 +243,13 @@ class AdminDashboardView
 
 </div>
 
+<div id="interval_config">
+    <h2>Interval Override</h2>
+    <form action="" method="GET">
+        Interval(seconds):<input type="text" name="interval" size="4"/>
+    </form>
+</div>
+
 </div>
 
 <?php

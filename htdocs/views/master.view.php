@@ -134,7 +134,8 @@ abstract class MasterView
         </div>
 
         <div id="footer">
-            <sup>*</sup> Data is based off your value of the 'average_interval' (<?php echo $BTC_PROXY['average_interval']?>) setting in the config file.<br /><br />
+            <sup>*</sup> Data is based off your value of the 'average_interval' (<?php if ($this->viewdata['interval_override']) { echo "override: " . $this->viewdata['interval_override']; } else { echo $BTC_PROXY['average_interval']; } ?>) setting in the config file.<br /><br />
+		<br/>
             bitcoin-mining-proxy &copy; 2011 <a href="http://www.chrishowie.com">Chris Howie</a>.
 
             This software may be distributed or hosted under the terms of the
