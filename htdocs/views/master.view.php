@@ -118,7 +118,7 @@ abstract class MasterView
         }
         </script>
     </head>
-<?php if ($BTC_PROXY['refresh_interval'] > 0) { 
+<?php if ($title == "Dashboard" && $BTC_PROXY['refresh_interval'] > 0) { 
     echo "<body onload=\"JavaScript:timedRefresh({$BTC_PROXY['refresh_interval']});\">";
 } else {
     echo "<body>";
