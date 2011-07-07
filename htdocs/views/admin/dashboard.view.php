@@ -102,7 +102,11 @@ class AdminDashboardView
         <th>Rejected<sup>*</sup></th>
         <th>Hashing speed<sup>*</sup></th>
     </tr>
-    <?php foreach ($this->viewdata['worker-status'] as $row) { ?>
+    <?php 
+    $workerstatus_count = 0;
+    foreach ($this->viewdata['worker-status'] as $row) { 
+          $workerstatus_count++;
+    ?>
     <?php if ($row['accepted_last_interval'] > 0 and round(($row['rejected_last_interval'] / $row['shares_last_interval']) * 100, 2) >= $BTC_PROXY['rejected_alert']) { ?>
     <tr class="alert">
     <?php } elseif (!isset($row['active_pool']) or !isset($row['last_accepted_pool']) or !isset($row['shares_last_interval'])) { ?>
@@ -169,7 +173,7 @@ class AdminDashboardView
     </tr>
     <?php } ?>
 </table>
-
+<div id="workerstatus-chart" align="center"></div>
 </div>
 
 <br />
@@ -186,7 +190,11 @@ class AdminDashboardView
         <th>Shares<sup>*</sup></th>
         <th>Rejected<sup>*</sup></th>
     </tr>
-    <?php foreach ($this->viewdata['pool-status'] as $row) { ?>
+    <?php 
+    $poolstatus_count = 0;
+    foreach ($this->viewdata['pool-status'] as $row) { 
+	$poolstatus_count++;
+    ?>
     <?php if ($row['total'] > 0 and round(($row['rejected'] / $row['total']) * 100, 2) >= $BTC_PROXY['rejected_alert']) { ?>
     <tr class="alert">
     <?php } else { ?>
@@ -240,10 +248,77 @@ class AdminDashboardView
     </tr>
     <?php } ?>
 </table>
+<div id="poolchart_div" class="data" align="center">
+</div>
+</div>
 
+<div id="interval_config">
+    <h2>Interval Override</h2>
+    <form action="" method="GET">
+        Interval(seconds):<input type="text" name="interval" size="4"/>
+    </form>
 </div>
 
 </div>
+<?php
+if ($BTC_PROXY['enable_graphs']) { ?>
+
+<script type="text/javascript">
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.setOnLoadCallback(drawChartPool);
+    google.setOnLoadCallback(drawChartWorkerShares);
+    function drawChartPool() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Pool');
+      data.addColumn('number', 'Shares');
+      data.addRows(<?php echo $poolstatus_count ?>);
+      <?php
+      $idx = 0;
+      foreach ($this->viewdata['pool-status'] as $row) {
+         echo "data.setValue({$idx}, 0, \"{$row['pool']}\");";
+         echo "data.setValue({$idx}, 1, {$row['total']});";
+         echo "\n";
+         $idx++;
+      }
+      ?>
+
+      var chart = new google.visualization.PieChart(document.getElementById('poolchart_div'));
+      chart.draw(data, {backgroundColor: '#222', 
+		width: 380, height: 200,
+		titleTextStyle: {color: 'white'},
+		pieSliceTextStyle: {color: 'white'},
+		legendTextStyle: {color: 'white'},
+		title: 'Mining Pool Shares'});
+    }
+    function drawChartWorkerShares() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Worker');
+      data.addColumn('number', 'Shares');
+      data.addRows(<?php echo $workerstatus_count ?>);
+      <?php
+      $idx = 0;
+      foreach ($this->viewdata['worker-status'] as $row) {
+         echo "data.setValue({$idx}, 0, \"{$row['worker']}\");";
+         $shares = 0;
+         if (isset($row['shares_last_interval'])) {
+            $shares = $row['shares_last_interval'];
+         }
+         echo "data.setValue({$idx}, 1, $shares);";
+         echo "\n";
+         $idx++;
+      }
+      ?>
+      var chart = new google.visualization.PieChart(document.getElementById('workerstatus-chart'));
+      chart.draw(data, {backgroundColor: '#222', 
+                width: 380, height: 200,
+                titleTextStyle: {color: 'white'},
+                pieSliceTextStyle: {color: 'white'},
+                legendTextStyle: {color: 'white'},
+                title: 'Worker Shares Distribution'});
+    }
+</script>
+<?php
+} ?>
 
 <?php
     }
