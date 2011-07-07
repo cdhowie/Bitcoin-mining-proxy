@@ -192,8 +192,15 @@ function get_tempdata($key)
 $HUMAN_TIME_POSTFIX = array("second", "minute", "hour", "day", "week", "month", "year");
 $HUMAN_TIME_LENGTHS = array(60, 60, 24, 7, 4.3452380952380952380952380952381, 12);
 
-function human_time($difference)
+function human_time($difference, $suffix = true)
 {
+    $future = false;
+
+    if ($difference < 0) {
+        $future = true;
+        $difference = -$difference;
+    }
+
     global $HUMAN_TIME_POSTFIX, $HUMAN_TIME_LENGTHS;
 
     for ($i = 0; $difference >= $HUMAN_TIME_LENGTHS[$i]; $i++)
@@ -206,7 +213,13 @@ function human_time($difference)
     if ($difference != 1)
         $postfix .= "s";
 
-    return "$difference $postfix ago";
+    $str = "$difference $postfix";
+
+    if ($suffix) {
+        $str .= ' ' . ($future ? 'from now' : 'ago');
+    }
+
+    return $str;
 }
 
 function format_date($date)
