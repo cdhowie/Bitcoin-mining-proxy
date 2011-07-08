@@ -171,6 +171,10 @@ function do_admin_auth() {
     global $BTC_PROXY;
 
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
+	if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+            $ha = base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6));
+	    list($_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW']) = explode(':' , $ha);
+	}
         auth_fail();
     }
 
