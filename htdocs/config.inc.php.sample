@@ -48,7 +48,11 @@ $BALANCE_JSON = array(
         'slush' => array(
                 'url' => 'https://mining.bitcoin.cz/accounts/profile/json/123',
                 'confirmed' => 'confirmed_reward',
-                'unconfirmed' => 'unconfirmed_reward')
+                'unconfirmed' => 'unconfirmed_reward'),
+	'bitcoinpool' => array(
+                'url' => 'http://bitcoinpool.com/user.php?u=user&json=1',
+                'confirmed' => 'User.unpaid',
+                'unconfirmed' => 'User.unconfirmed')
 );
 
 ?>
