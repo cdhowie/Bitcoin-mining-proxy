@@ -57,7 +57,11 @@ $BALANCE_JSON = array(
 	'mtred' => array(
                 'url' => 'https://mtred.com/api/user/key/123',
                 'confirmed' => 'balance',
-                'unconfirmed' => '')
+                'unconfirmed' => ''),
+	'bitcoins-lc' => array(
+                'exec' => '/tmp/getBitcoinslc.sh',
+                'confirmed' => 'balance',
+                'unconfirmed' => 'unconfirmed')
 );
 
 ?>
