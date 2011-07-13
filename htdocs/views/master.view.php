@@ -105,6 +105,9 @@ abstract class MasterView
         }
 
         $menuid = $this->getMenuId();
+        if ($title == "Dashboard" && $BTC_PROXY['refresh_interval'] > 0) {
+            header("Refresh: " . $BTC_PROXY['refresh_interval']);
+        }
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -116,17 +119,8 @@ abstract class MasterView
         <script type="text/javascript">
             google.load('visualization', '1', {packages: ['corechart']});
         </script>
-        <script type="text/JavaScript">
-        function timedRefresh(timeoutPeriod) {
-           setTimeout("location.reload(true);",timeoutPeriod);
-        }
-        </script>
     </head>
-<?php if ($title == "Dashboard" && $BTC_PROXY['refresh_interval'] > 0) { 
-    echo "<body onload=\"JavaScript:timedRefresh({$BTC_PROXY['refresh_interval']});\">";
-} else {
-    echo "<body>";
-} ?>
+    <body>
         <h1><?php echo_html($title) ?></h1>
 
         <ul id="navmenu">
