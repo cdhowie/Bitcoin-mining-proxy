@@ -256,7 +256,7 @@ class AdminDashboardView
 <table>
 <tr style="border: 0;">
    <td><div id="poolchart_div"></div></td>
-   <td><div id="poolchart_balance_col"></div></td>
+   <td><div id="poolchart_balance_col"></div><div id="balance_col_footer" align="center"></div></td>
 </tr>
 </table>
 </div>
@@ -410,6 +410,10 @@ function graphBalances() {
       }
       balance_total = Math.round(balance_total*1000)/1000;
       unconfirmed_total = Math.round(unconfirmed_total*1000)/1000;
+      var total = balance_total + unconfirmed_total;
+      total = Math.round(total*1000)/1000;
+      document.getElementById('balance_col_footer')
+	.innerHTML = '<strong>Total:</strong> ' + total;
       var data = new google.visualization.DataTable();
       data.addColumn('string', 'Pool');
       data.addColumn('number', 'Confirmed ('+balance_total+')');
