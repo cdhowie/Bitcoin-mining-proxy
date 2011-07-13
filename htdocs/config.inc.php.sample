@@ -36,6 +36,7 @@ $BTC_PROXY = array(
 );
 
 # Where "123" should be where your API key is
+# Where "user" for bitcoinpool is your username
 $BALANCE_JSON = array(
         'deepbit' => array(
                 'url' => 'http://deepbit.net/api/123',
@@ -52,7 +53,11 @@ $BALANCE_JSON = array(
 	'bitcoinpool' => array(
                 'url' => 'http://bitcoinpool.com/user.php?u=user&json=1',
                 'confirmed' => 'User.unpaid',
-                'unconfirmed' => 'User.unconfirmed')
+                'unconfirmed' => 'User.unconfirmed'),
+	'mtred' => array(
+                'url' => 'https://mtred.com/api/user/key/123',
+                'confirmed' => 'balance',
+                'unconfirmed' => '')
 );
 
 ?>
