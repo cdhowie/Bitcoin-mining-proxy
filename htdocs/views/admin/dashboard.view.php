@@ -428,7 +428,7 @@ function graphBalances() {
          i++;
       }
       var chart = new google.visualization.ColumnChart(document.getElementById('poolchart_balance_col'));
-      chart.draw(data, {width:440, height:260, 
+      chart.draw(data, {width:500, height:260, 
 			backgroundColor: '#222',
 			titleTextStyle: {color: 'white'},
                 	pieSliceTextStyle: {color: 'white'},
