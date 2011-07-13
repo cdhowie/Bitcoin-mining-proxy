@@ -35,4 +35,20 @@ $BTC_PROXY = array(
     'enable_graphs'         => TRUE
 );
 
+# Where "123" should be where your API key is
+$BALANCE_JSON = array(
+        'deepbit' => array(
+                'url' => 'http://deepbit.net/api/123',
+                'confirmed' => 'confirmed_reward',
+                'unconfirmed' => ''),
+        'btcguild' => array(
+                'url' => 'https://www.btcguild.com/api.php?api_key=123',
+                'confirmed' => 'user.confirmed_rewards',
+                'unconfirmed' => 'user.unconfirmed_rewards'),
+        'slush' => array(
+                'url' => 'https://mining.bitcoin.cz/accounts/profile/json/123',
+                'confirmed' => 'confirmed_reward',
+                'unconfirmed' => 'unconfirmed_reward')
+);
+
 ?>

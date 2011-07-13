@@ -59,6 +59,7 @@ class AdminDashboardView
     protected function renderBody()
     {
         global $BTC_PROXY;
+        global $BALANCE_JSON;
 ?>
 
 <div id="dashboard">
@@ -248,23 +249,31 @@ class AdminDashboardView
     </tr>
     <?php } ?>
 </table>
-<div id="poolchart_div" class="data" align="center">
-</div>
 </div>
 
-<div id="interval_config">
-    <h2>Interval Override</h2>
-    <form action="" method="GET">
-        Interval(seconds):<input type="text" name="interval" size="4"/>
-    </form>
+<br/>
+<div class="poolcharts" align="center">
+<table>
+<tr style="border: 0;">
+   <td><div id="poolchart_div"></div></td>
+   <td><div id="poolchart_balance_col"></div></td>
+</tr>
+</table>
 </div>
 
+<div id="interval_override">
+<h2>Interval Override</h2>
+<form action="" method="GET">
+Interval(seconds):<input type="text" name="interval" size="4"/>
+</form>
 </div>
+
 <?php
 if ($BTC_PROXY['enable_graphs']) { ?>
 
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});
+    google.load("jquery", "1.6.2");
     google.setOnLoadCallback(drawChartPool);
     google.setOnLoadCallback(drawChartWorkerShares);
     function drawChartPool() {
@@ -284,7 +293,7 @@ if ($BTC_PROXY['enable_graphs']) { ?>
 
       var chart = new google.visualization.PieChart(document.getElementById('poolchart_div'));
       chart.draw(data, {backgroundColor: '#222', 
-		width: 380, height: 200,
+		width: 440, height: 260, legend: 'left',
 		titleTextStyle: {color: 'white'},
 		pieSliceTextStyle: {color: 'white'},
 		legendTextStyle: {color: 'white'},
@@ -310,15 +319,131 @@ if ($BTC_PROXY['enable_graphs']) { ?>
       ?>
       var chart = new google.visualization.PieChart(document.getElementById('workerstatus-chart'));
       chart.draw(data, {backgroundColor: '#222', 
-                width: 380, height: 200,
+                width: 500, height: 220,
                 titleTextStyle: {color: 'white'},
                 pieSliceTextStyle: {color: 'white'},
                 legendTextStyle: {color: 'white'},
                 title: 'Worker Shares Distribution'});
     }
 </script>
+
 <?php
 } ?>
+
+<!-- Balance stats -->
+<script type="text/javascript">
+
+Object.size = function(obj) {
+    var size = 0, key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) size++;
+    }
+    return size;
+};
+
+var balance = new Array();
+var unconfirmed = new Array();
+var pool_count = <?php echo count($BALANCE_JSON) ?>;
+var pools = [<?php
+   $i = 0;
+   foreach ($BALANCE_JSON as $key => $value) {
+	echo "'$key'";
+        $i++;
+	if ($i < count($BALANCE_JSON)) { echo ","; }
+   }
+?>];
+<?php
+foreach ($BALANCE_JSON as $key => $value) {
+   echo "pools['$key'] = new Array();\n";
+   echo "pools['$key']['confirmed'] = '" . $BALANCE_JSON[$key]['confirmed'] ."';\n";
+   echo "pools['$key']['unconfirmed'] = '" . $BALANCE_JSON[$key]['unconfirmed'] ."';\n";
+}
+?>
+
+function createGraphNotifier() {
+   var counter = <?php echo count($BALANCE_JSON) ?>;
+   return function() {
+      if (--counter == 0) graphBalances();
+   }
+}
+var notifyGraph = createGraphNotifier();
+
+function getBalance(id, balance) {
+   $.ajaxSetup({timeout: 15000});
+   $.getJSON('../proxy-json.php?pool='+id, function(data) {
+      // confirmed
+      var evalstr = "var t = data." + pools[id]['confirmed'];
+      eval(evalstr);
+      balance[id] = t;
+      // unconfirmed
+      if (pools[id]['unconfirmed']) {
+         t = 0;
+         evalstr = "t = data." + pools[id]['unconfirmed'];
+         eval(evalstr);
+         unconfirmed[id] = t;
+      }
+      console.log(id+ ": " + balance[id] + " / " + unconfirmed[id]);
+      notifyGraph();
+   });
+}
+
+function getBalances(balance) {   
+   var counter = 0;
+   for (var pool in pools) {
+      if (pools[pool]['confirmed'])
+         getBalance(pool, balance);
+   }
+}
+
+
+<?php if ($BTC_PROXY['enable_graphs']) { ?>
+function graphBalances() {
+   console.log("graphBalances() " + Object.size(balance));
+   function drawBalanceGraphCol() {
+      if (!(balance && Object.size(balance) > 0)) { console.log("return"); return; }
+      var balance_total = 0;
+      var unconfirmed_total = 0;
+      for (var bal in balance) {
+         balance_total += parseFloat(balance[bal]);
+         if (unconfirmed[bal])
+                unconfirmed_total += parseFloat(unconfirmed[bal]);
+      }
+      balance_total = Math.round(balance_total*1000)/1000;
+      unconfirmed_total = Math.round(unconfirmed_total*1000)/1000;
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Pool');
+      data.addColumn('number', 'Confirmed ('+balance_total+')');
+      data.addColumn('number', 'Unconfirmed ('+unconfirmed_total+')');
+
+      data.addRows(pool_count);
+      var i = 0;
+      for (var bal in balance) {
+         data.setValue(i, 0, bal);
+         data.setValue(i, 1, parseFloat(balance[bal]));
+         data.setValue(i, 2, parseFloat(unconfirmed[bal]));
+         i++;
+      }
+      var chart = new google.visualization.ColumnChart(document.getElementById('poolchart_balance_col'));
+      chart.draw(data, {width:440, height:260, 
+			backgroundColor: '#222',
+			titleTextStyle: {color: 'white'},
+                	pieSliceTextStyle: {color: 'white'},
+                	legendTextStyle: {color: 'white'},
+			title: 'Mining Pool Balance(s)',
+			isStacked: true, legend: 'bottom',
+			hAxis: { title:' ', titleTextStyle: {color: 'white'}, textStyle: {color: 'white'} },
+			vAxis: { title:'BTC', titleTextStyle: {color: 'white'}, textStyle: {color: 'white'} }
+			});
+   }
+   drawBalanceGraphCol();
+}
+window.addEventListener("balanceReady", graphBalances, false);
+<?php } ?>
+
+setTimeout(getBalances(balance), 3000);
+
+</script>
+
 
 <?php
     }
