@@ -297,7 +297,7 @@ $request->id = "json";
 // lets try harder to get work...
 $tries = 0;
 if(count($rows)) {
-  while($tries < $BTCPROXY['getwork_retries']) {
+  while($tries < $BTC_PROXY['getwork_retries']) {
     foreach ($rows as $row) {
         $response = place_json_call($request, $row['url'], $row['username'], $row['password'], $headers);
     
