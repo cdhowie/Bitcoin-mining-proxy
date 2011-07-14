@@ -285,6 +285,12 @@ class AdminDashboardView
             }
         ?></td>
         <td><?php
+            if (isset($row['rejected'])) {
+                echo_html($row['rejected']);
+            } else {
+                echo "0";
+            }
+            echo " (";
             if (isset($row['total']) and isset($row['rejected'])) {
                 if ($row['total'] > 0) {
                     echo_html(number_format(($row['rejected'] / $row['total']) * 100, 2).'%');
@@ -294,6 +300,7 @@ class AdminDashboardView
             } else {
                 echo "0.00%";
             }
+            echo ")";
         ?></td>
     </tr>
     <?php
