@@ -154,6 +154,12 @@ class AdminDashboardView
             }
         ?></td>
         <td><?php
+            if (isset($row['rejected_last_interval'])) {
+                echo_html($row['rejected_last_interval']);
+            } else {
+                echo "0";
+            }
+            echo " (";
             if (isset($row['shares_last_interval']) and isset($row['rejected_last_interval'])) {
                 if ($row['shares_last_interval'] > 0) {
                     echo_html(number_format(($row['rejected_last_interval'] / $row['shares_last_interval']) * 100, 2).'%');
@@ -163,6 +169,7 @@ class AdminDashboardView
             } else {
                 echo "0.00%";
             }
+            echo ")";
         ?></td>
         <td><?php
             if (isset($row['mhash'])) {
@@ -172,7 +179,49 @@ class AdminDashboardView
             }
         ?> MHash/s</td>
     </tr>
-    <?php } ?>
+    <?php
+        //build cumulative counts so we don't have to reload the data
+        $global_worker_status['shares_last_interval'] = $global_worker_status['shares_last_interval']+$row['shares_last_interval'];
+        $global_worker_status['rejected_last_interval'] = $global_worker_status['rejected_last_interval']+$row['rejected_last_interval'];
+        $global_worker_status['mhash'] = $global_worker_status['mhash']+$row['mhash'];
+    } ?> 
+    <tr>
+        <td><b>Totals</b></td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td><?php
+            if (isset($global_worker_status['shares_last_interval'])) {
+                echo_html($global_worker_status['shares_last_interval']);
+            } else {
+                echo "0";
+            }
+        ?></td>
+        <td><?php
+            if (isset($global_worker_status['rejected_last_interval'])) {
+                echo_html($global_worker_status['rejected_last_interval']);
+            } else {
+                echo "0";
+            }
+            echo " (";
+            if (isset($global_worker_status['shares_last_interval']) and isset($global_worker_status['rejected_last_interval'])) {
+                if ($global_worker_status['shares_last_interval'] > 0) {
+                    echo_html(number_format(($global_worker_status['rejected_last_interval'] / $global_worker_status['shares_last_interval']) * 100, 2).'%');
+                } else {
+                    echo "0.00%";
+                }
+            } else {
+                echo "0.00%";
+            }
+            echo ")";
+        ?></td>
+        <td><?php
+            if (isset($global_worker_status['mhash'])) {
+                print(round($global_worker_status['mhash'],3));
+            } else {
+                echo "0";
+            }
+        ?> MHash/s</td>
+    </tr>
 </table>
 <div id="workerstatus-chart" align="center"></div>
 </div>
@@ -247,7 +296,48 @@ class AdminDashboardView
             }
         ?></td>
     </tr>
-    <?php } ?>
+    <?php
+        //build cumulative counts so we don't have to reload the data
+        $global_pool_status['getworks'] = $global_pool_status['getworks']+$row['getworks'];
+        $global_pool_status['total'] = $global_pool_status['total']+$row['total'];
+        $global_pool_status['rejected'] = $global_pool_status['rejected']+$row['rejected'];
+    } ?>
+    <tr>
+        <td><b>Totals</b></td>
+        <td>&nbsp;</td>
+        <td><?php
+            if (isset($global_pool_status['getworks'])) {
+                echo_html($global_pool_status['getworks']);
+            } else {
+                echo "0";
+            }
+        ?></td>
+        <td><?php
+            if (isset($global_pool_status['total'])) {
+                echo_html($global_pool_status['total']);
+            } else {
+                echo "0";
+            }
+        ?></td>
+        <td><?php
+            if (isset($global_pool_status['rejected'])) {
+                echo_html($global_pool_status['rejected']);
+            } else {
+                echo "0";
+            }
+            echo " (";
+            if (isset($global_pool_status['total']) and isset($global_pool_status['rejected'])) {
+                if ($global_pool_status['total'] > 0) {
+                    echo_html(number_format(($global_pool_status['rejected'] / $global_pool_status['total']) * 100, 2).'%');
+                } else {
+                    echo "0.00%";
+                }
+            } else {
+                echo "0.00%";
+            }
+            echo ")";
+        ?></td>
+    </tr>
 </table>
 </div>
 
