@@ -185,7 +185,7 @@ class AdminDashboardView
         $global_worker_status['rejected_last_interval'] = $global_worker_status['rejected_last_interval']+$row['rejected_last_interval'];
         $global_worker_status['mhash'] = $global_worker_status['mhash']+$row['mhash'];
     } ?> 
-    <tr>
+    <tr class="datatotals">
         <td><b>Totals</b></td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
@@ -309,7 +309,7 @@ class AdminDashboardView
         $global_pool_status['total'] = $global_pool_status['total']+$row['total'];
         $global_pool_status['rejected'] = $global_pool_status['rejected']+$row['rejected'];
     } ?>
-    <tr>
+    <tr class="datatotals">
         <td><b>Totals</b></td>
         <td>&nbsp;</td>
         <td><?php
