@@ -1,0 +1,24 @@
+#!/bin/bash
+
+CURL_OPTS="-s -f -m90 --retry 2 --retry-delay 45"
+EMAIL=user@mail.com
+PASSWORD=password
+
+	TMPFILE=`mktemp`
+	curl -s -k -c /tmp/cookies.btlc -m20 --retry 2 --retry-delay 10 http://www.bitcoins.lc/  > $TMPFILE
+	if [ $? -ne 0 ]
+	then
+		echo "Error"
+	else
+		LOGIN_TOKEN=`cat $TMPFILE | grep csrf_token |head -1 | perl -e 'my $a = <>; $a =~ /value="([0-9a-zA-Z]+)"/g; print "$1\n"'`
+		LOGINPAGE=`mktemp`
+		curl -L -s -k -e http://www.bitcoins.lc/ -b /tmp/cookies.btlc -c /tmp/cookies.btlc -d "_csrf_token=$LOGIN_TOKEN&action=login&email=$EMAIL&login=Proceed&password=$PASSWORD" https://www.bitcoins.lc/ > $LOGINPAGE
+
+		BALANCE=`cat $LOGINPAGE | grep -A1 bala |grep BTC |awk '{print $1}'`
+		ESTIMATE=`cat $LOGINPAGE | grep -A1 Estimated | grep BTC |awk '{print $1}'`
+
+		echo "{\"balance\": \"$BALANCE\", \"unconfirmed\": \"$ESTIMATE\"}"
+		rm -f /tmp/cookies.btlc
+		rm -f $TMPFILE
+		rm -f $LOGINPAGE
+	fi

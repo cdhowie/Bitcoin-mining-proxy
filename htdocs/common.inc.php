@@ -27,6 +27,8 @@ define('DB_SCHEMA_VERSION', 3);
 # unauthenticated users and clients requesting work from the proxy.
 header('X-Source-Code: https://github.com/cdhowie/Bitcoin-mining-proxy');
 
+session_start();
+
 function db_connect() {
     global $BTC_PROXY;
 

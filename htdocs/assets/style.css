@@ -77,6 +77,11 @@ table.data tr.alert:hover {
     background-color: #633;
 }
 
+table.data tr.datatotals td {
+    font-weight: bold;
+    background-color: #303030;
+}
+
 #footer {
     text-align: center;
 

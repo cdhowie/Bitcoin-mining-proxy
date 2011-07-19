@@ -27,6 +27,12 @@ $BTC_PROXY = array(
     # Percentage to highlight rejection percentage for pool status.
     # Default: 3 (3%)
     'rejected_alert'        => 3,
+<<<<<<< HEAD
+
+    # Dashboard configuration
+    'recent_work_num'       => 5,
+    'refresh_interval'      => 300000 # milliseconds, 0 to disable
+=======
     'getwork_retries'       => 5,
 
     # Dashboard configuration
@@ -66,6 +72,7 @@ $BALANCE_JSON = array(
                 'exec' => '/tmp/getBitcoinslc.sh',
                 'confirmed' => 'balance',
                 'unconfirmed' => 'unconfirmed')
+>>>>>>> eb17301caf54ac0f04ce41979bfabdef81b0e033
 );
 
 ?>

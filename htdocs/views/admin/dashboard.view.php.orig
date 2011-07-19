@@ -185,7 +185,11 @@ class AdminDashboardView
         $global_worker_status['rejected_last_interval'] = $global_worker_status['rejected_last_interval']+$row['rejected_last_interval'];
         $global_worker_status['mhash'] = $global_worker_status['mhash']+$row['mhash'];
     } ?> 
+<<<<<<< HEAD
+    <tr>
+=======
     <tr class="datatotals">
+>>>>>>> eb17301caf54ac0f04ce41979bfabdef81b0e033
         <td><b>Totals</b></td>
         <td>&nbsp;</td>
         <td>&nbsp;</td>
@@ -309,7 +313,11 @@ class AdminDashboardView
         $global_pool_status['total'] = $global_pool_status['total']+$row['total'];
         $global_pool_status['rejected'] = $global_pool_status['rejected']+$row['rejected'];
     } ?>
+<<<<<<< HEAD
+    <tr>
+=======
     <tr class="datatotals">
+>>>>>>> eb17301caf54ac0f04ce41979bfabdef81b0e033
         <td><b>Totals</b></td>
         <td>&nbsp;</td>
         <td><?php
@@ -358,11 +366,21 @@ class AdminDashboardView
 </table>
 </div>
 
+<<<<<<< HEAD
 <div id="interval_config">
     <h2>Interval Override</h2>
     <form action="" method="GET">
         Interval(seconds):<input type="text" name="interval" size="4"/>
     </form>
+</div>
+
+=======
+<div id="interval_override">
+<h2>Interval Override</h2>
+<form action="" method="GET">
+Interval(seconds):<input type="text" name="interval" size="4"/>
+</form>
+>>>>>>> eb17301caf54ac0f04ce41979bfabdef81b0e033
 </div>
 
 <?php
