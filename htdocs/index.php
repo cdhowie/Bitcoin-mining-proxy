@@ -294,18 +294,29 @@ $request->params = array();
 $request->method = "getwork";
 $request->id = "json";
 
-foreach ($rows as $row) {
-    $response = place_json_call($request, $row['url'], $row['username'], $row['password'], $headers);
-
-    if (is_object($response) && is_object($response->result)) {
-        set_headers($headers, $row['id'], $row['url']);
-
-        process_work($pdo, $worker_id, $row['id'], $response, $response->id);
-
-        json_success($response->result, $json->id);
+// lets try harder to get work...
+$tries = 0;
+if(count($rows)) {
+  while($tries < $BTCPROXY['getwork_retries']) {
+    foreach ($rows as $row) {
+        $response = place_json_call($request, $row['url'], $row['username'], $row['password'], $headers);
+    
+        if (is_object($response) && is_object($response->result)) {
+            set_headers($headers, $row['id'], $row['url']);
+    
+            process_work($pdo, $worker_id, $row['id'], $response, $response->id);
+    
+            json_success($response->result, $json->id);
+        }
     }
+    
+    $tries++;
+    sleep(1+rand(0,3));
+  }
 }
 
-json_error("No enabled pools responded to the work request.", $json->id);
+// and because of the way phoenix handles crap, for now atleast, it's better to just
+// drop the call as it were.
+//json_error("No enabled pools responded to the work request.", $json->id);
 
 ?>
