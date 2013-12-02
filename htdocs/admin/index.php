@@ -28,12 +28,18 @@ class AdminDashboardController extends AdminController
     public function indexDefaultView()
     {
         global $BTC_PROXY;
-
         $viewdata = array();
+
+        $interval = $_REQUEST['interval'];
+        if (strlen($interval) > 0) {
+            $viewdata['interval_override'] = $interval;
+        } else {
+            $interval = $BTC_PROXY['average_interval'];
+        }
 
         $pdo = db_connect();
 
-        $viewdata['recent-submissions'] = db_query($pdo, '
+        $viewdata['recent-submissions'] = db_query($pdo, "
             SELECT
                 w.name AS worker,
                 p.name AS pool,
@@ -47,7 +53,7 @@ class AdminDashboardController extends AdminController
 
                 ORDER BY id DESC
 
-                LIMIT 10
+                LIMIT {$BTC_PROXY['recent_work_num']}
             ) sw
 
             INNER JOIN pool p
@@ -57,9 +63,9 @@ class AdminDashboardController extends AdminController
             ON w.id = sw.worker_id
             
             ORDER BY sw.time DESC
-        ');
+        ");
 
-        $viewdata['recent-failed-submissions'] = db_query($pdo, '
+        $viewdata['recent-failed-submissions'] = db_query($pdo, " 
             SELECT
                 w.name AS worker,
                 p.name AS pool,
@@ -75,7 +81,7 @@ class AdminDashboardController extends AdminController
 
                 ORDER BY id DESC
 
-                LIMIT 10
+                LIMIT {$BTC_PROXY['recent_work_num']}
             ) sw
 
             INNER JOIN pool p
@@ -85,7 +91,7 @@ class AdminDashboardController extends AdminController
             ON w.id = sw.worker_id
             
             ORDER BY sw.time DESC
-        ');
+        ");
 
         $viewdata['worker-status'] = db_query($pdo, '
             SELECT
@@ -181,8 +187,8 @@ class AdminDashboardController extends AdminController
 
             ORDER BY w.name
         ', array(
-            ':average_interval'     => $BTC_PROXY['average_interval'],
-            ':average_interval_two' => $BTC_PROXY['average_interval']
+            ':average_interval'     => $interval,
+            ':average_interval_two' => $interval
         ));
         
         $viewdata['pool-status'] = db_query($pdo, '
@@ -274,8 +280,8 @@ class AdminDashboardController extends AdminController
                 
                 
         ', array(
-            ':average_interval_1'     => $BTC_PROXY['average_interval'],
-            ':average_interval_2'     => $BTC_PROXY['average_interval']
+            ':average_interval_1'     => $interval,
+            ':average_interval_2'     => $interval
         ));
         
         $version = db_query($pdo, "

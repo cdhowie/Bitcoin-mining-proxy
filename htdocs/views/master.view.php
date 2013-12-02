@@ -51,8 +51,8 @@ abstract class MasterView
 
             foreach ($types as $type) {
                 $parts = explode(';', $type);
-                if ($parts[0] == 'application/xhtml+xml') {
-                    header('Content-Type: application/xhtml+xml');
+                if ($parts[0] == 'application/xhtml') {
+                    header('Content-Type: application/xhtml');
                     return;
                 }
             }
@@ -95,6 +95,7 @@ abstract class MasterView
 
     public function renderHtml()
     {
+	global $BTC_PROXY;
         echo '<?xml version="1.0" encoding="UTF-8" ?>';
 
         if (!isset($this->viewdata['title'])) {
@@ -104,6 +105,9 @@ abstract class MasterView
         }
 
         $menuid = $this->getMenuId();
+        if ($title == "Dashboard" && $BTC_PROXY['refresh_interval'] > 0) {
+            header("Refresh: " . $BTC_PROXY['refresh_interval']);
+        }
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -111,6 +115,10 @@ abstract class MasterView
     <head>
         <title><?php echo_html($title) ?></title>
         <link rel="stylesheet" type="text/css" href="<?php echo_html(make_url('/assets/style.css')) ?>" />
+        <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load('visualization', '1', {packages: ['corechart']});
+        </script>
     </head>
     <body>
         <h1><?php echo_html($title) ?></h1>
@@ -133,7 +141,7 @@ abstract class MasterView
         </div>
 
         <div id="footer">
-            <sup>*</sup> Data is based off your value of the 'average_interval' setting in the config file.<br /><br />
+            <sup>*</sup> Data is based off your value of the 'average_interval' (<?php if ($this->viewdata['interval_override']) { echo "override: " . $this->viewdata['interval_override']; } else { echo $BTC_PROXY['average_interval']; } ?>) setting in the config file.<br /><br />
             bitcoin-mining-proxy &copy; 2011 <a href="http://www.chrishowie.com">Chris Howie</a>.
 
             This software may be distributed or hosted under the terms of the

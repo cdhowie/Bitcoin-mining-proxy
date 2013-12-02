@@ -1,4 +1,19 @@
 Options -Indexes
 
-php_flag magic_quotes_gpc Off
-php_flag allow_url_fopen On
+<IfModule php5_module>
+    php_flag magic_quotes_gpc Off
+    php_flag allow_url_fopen On
+</IfModule>
+
+# Load the rewrite module if php module is not loaded
+<IfModule !php5_module>
+    <IfModule !rewrite_module>
+        LoadModule rewrite_module modules/mod_rewrite.so
+    </IfModule>
+</IfModule>
+
+# If rewrite module is loaded, pass authorization to PHP
+<IfModule rewrite_module>
+    RewriteEngine on
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+</IfModule>
