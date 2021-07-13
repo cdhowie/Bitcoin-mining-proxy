@@ -1,4 +1,4 @@
-Options -Indexes
+Jason Serrano
 
 php_flag magic_quotes_gpc Off
 php_flag allow_url_fopen On
